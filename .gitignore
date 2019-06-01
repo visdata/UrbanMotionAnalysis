@@ -1,0 +1,6 @@
+*.pyc
+*.log
+*.out
+
+datasets/poi/*
+test/*
