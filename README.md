@@ -2,18 +2,7 @@
 
 状态预测数据处理以及可视化查询后段接口说明文档。
 
-## 运行方式
 
-### 初始化
-
-```
-# 克隆内容到本地
-git clone git@github.com:hijiangtao/statePrediction.git
-
-# 进入该文件
-cd PATH
-
-# 开发模式前请确认在 dev 分支上操作
 ```
 
 ### 离线处理部分
@@ -62,6 +51,3 @@ python treeMapCal.py /datahouse/tripflow/200 /datahouse/tripflow/200 9 0.01 60 0
 python angleClusterCal.py /datahouse/tripflow/200 /datahouse/tripflow/200 9 0.01 100
 ```
 
-## 联系
-
-Github @hijiangtao
