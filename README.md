@@ -4,17 +4,7 @@
 
 
 
-## 运行方式
 
-### 初始化
-
-```
-# 克隆内容到本地
-git clone git@github.com:hijiangtao/statePrediction.git
-# 进入该文件
-cd PATH
-# 开发模式前请确认在 dev 分支上操作
-```
 ### 离线处理部分
 ```
 # 在原始数据上清洗成分天存储的数据，并添加属性
