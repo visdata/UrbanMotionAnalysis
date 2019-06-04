@@ -30,23 +30,6 @@ M3/
 └── ... # 离线或在线调用的各个脚本文件，除此外还包括 README、.gitignore 等等
 ```
 
-代码下载与本地运行流程如下所示：
-
-```
-# 克隆内容到本地（使用 SSH 或者 HTTPS 方式下载）
-git clone git@github.com:hijiangtao/statePrediction.git
-# 或者
-git pull https://github.com/hijiangtao/M3.git
-
-# 进入该文件
-cd M3
-
-# 开发模式前请确认在 dev 分支上操作
-git checkout dev
-
-# 传参并实际调用脚本进行计算
-python ExactScriptFile -param P1 ...
-```
 
 ### 1.2 离线处理部分
 
