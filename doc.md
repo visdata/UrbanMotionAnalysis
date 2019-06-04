@@ -87,6 +87,7 @@ python tripFlowCal.py -d /tripflow/spaceInterval/ -p /tripflow/spaceInterval/ -e
 
 ```
 # 使用双峰系数的方法计算异常值
+# 同文件夹下的util.py为具体的计算方法，calGridBCmetric调用util.py中的方法
 
 # ------ 调用示例 ------
 python calGridBCmetric.py
