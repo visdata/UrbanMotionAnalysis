@@ -137,7 +137,7 @@ python treeMapCal.py /datahouse/tripflow/200 /datahouse/tripflow/200 9 0.01 60 0
 | 11 | delta，控制 KDE 带宽， -1 表示不添加任何限制 |
 | 12 | max_distance，控制 treemap 生成流的最大长度，9999代表长度无限制 |
 | 13 | grid_size，控制城市网格单元的大小 |
-| 13 | city，控制所选择的城市 |
+| 14 | city，控制所选择的城市 |
 
 #### 1.3.2 angleClusterCal.py
 
