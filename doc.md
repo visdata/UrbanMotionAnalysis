@@ -114,7 +114,7 @@ python calGridBCmetric.py
 ```
 # 生成 treeMap 脚本
 
-[indir, outdir, x, tree_num, search_angle, seed_strength, tree_width, jump_length, seed_unit, grid_dirnum, delta, max_distance, grid_size, city]
+参数包括[indir, outdir, x, tree_num, search_angle, seed_strength, tree_width, jump_length, seed_unit, grid_dirnum, delta, max_distance, grid_size, city]
 	
 # ------ 调用示例 ------
 python treeMapCal.py /datahouse/tripflow/200 /datahouse/tripflow/200 9 0.01 60 0.1 1 3 basic -1 -1 9999 500 BJ
