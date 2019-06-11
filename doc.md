@@ -6,6 +6,8 @@
 
 除以上部分，该项目中还存储有约定数据格式 sample 文件以及一些有用的地理位置数据。
 
+相对于江涛学长之前的版本，添加了异常计算部分和起始地目的地判定部分，并对已有的一些文件做出了修改和调整。
+
 1. [使用方法](#1-使用方法)
     * [项目代码运行流程](#11-项目代码运行流程)
     * [离线处理部分](#12-离线处理部分)
@@ -102,6 +104,44 @@ python calGridBCmetric.py
 * 参数说明
 参数在文件中修改，包括城市、输入文件夹、输出文件夹、需要计算的起止时间段
 
+#### 1.2.5 findSourceDestination.py
+
+```
+# 查找每个移动记录可能的起始地和目的地记录
+# 通过引入 SrcDstJudgeClass.py 类对每个移动记录查找可能的起始地和目的地，将找到的记录存储于该移动记录所处的时间段当中（单个小时）。本部分采用了多进程进行处理，须确保 CPU 可调用核心数在 20 及以上。
+
+# ------ 调用示例 ------
+python findSourceDestination.py
+```
+
+* 参数说明
+参数在该文件中修改，包括输入文件夹、输出文件夹、需要计算的文件个数、进程个数、城市
+
+#### 1.2.6 srcDstCountByGrid.py
+
+```
+#按照网格来计算每个空间单元内起始地和目的地的数量
+#前提条件是已经使用findSourceDestination方法寻找到每个移动记录可能的起始地和目的地，并存储在相应的时间段中。
+
+# ------ 调用示例 ------
+python srcDstCountByGrid.py
+```
+
+* 参数说明
+参数在该文件中修改，包括输入文件夹、输出文件夹、需要计算的起止时间段
+
+#### 1.2.7 mergeSrcDst.py
+
+```
+# 以三个小时或多个小时合并大于一个小时的时间段内起始地和目的地的数量
+
+# ------ 调用示例 ------
+python mergeSrcDst.py
+```
+* 参数说明
+参数在该文件中修改，包括输入文件夹、输出文件夹、需要合并的时间段、输出文件名等
+
+
 
 ### 1.3 在线调用部分
 
@@ -114,7 +154,7 @@ python calGridBCmetric.py
 ```
 # 生成 treeMap 脚本
 
-参数包括[indir, outdir, x, tree_num, search_angle, seed_strength, tree_width, jump_length, seed_unit, grid_dirnum, delta, max_distance, grid_size, city]
+# 参数包括[indir, outdir, x, tree_num, search_angle, seed_strength, tree_width, jump_length, seed_unit, grid_dirnum, delta, max_distance, grid_size, city]
 	
 # ------ 调用示例 ------
 python treeMapCal.py /datahouse/tripflow/200 /datahouse/tripflow/200 9 0.01 60 0.1 1 3 basic -1 -1 9999 500 BJ
@@ -158,6 +198,7 @@ python angleClusterCal.py /datahouse/tripflow/200 /datahouse/tripflow/200 9 0.01
 | 3 | 处理的小时 ID |
 | 4 | eps |
 | 5 | min_samples |
+
 
 
 ### 2. 脚本依赖关系说明
