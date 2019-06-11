@@ -1,6 +1,6 @@
 ## 目录
 
-本项目存储在 UrbanMotion 项目中用到的状态预测、旅途树结构生成等数据处理以及可视化查询后端接口涉及到的代码，此 README 为该部分的说明文档，包含 treeMap 等数据与分析结果的 python 处理脚本。
+本项目存储在 UrbanMotion 项目中用到的状态预测、旅途树结构生成等数据处理以及可视化查询后端接口涉及到的代码，此文档为该部分的说明文档，包含 treeMap 等数据与分析结果的 python 处理脚本。
 
 其中，运行部分只披露现有在用的脚本细节，已废弃的脚本文件或未在 UrbanMotion 展示系统中使用的代码只在脚本依赖关系说明中涉及，作为备份与参考，不推荐实际使用。
 
@@ -63,25 +63,31 @@ python segRawData.py -d /datahouse/zhtan/datasets/VIS-rawdata-region-c-sample  -
 python segDayDataForTripFlow.py
 ```
 
-#### 1.2.3 tripFlowCal.py
+#### 1.2.3 tripFlowCal_all.py
 
 ```
 # trip 切分与聚类以及种子方向挑选工作
 
 # ------ 调用示例 ------
-python tripFlowCal.py -d /tripflow/spaceInterval/ -p /tripflow/spaceInterval/ -e 2 -x 9 -k 24000
+python tripFlowCal_all.py ,参数在代码中修改，可使用多线程，调用的函数参数包括i, eps, K, delta, stdindir, stdoutdir, cityLatLngDict[city], city, LngSPLIT, LatSPLIT
 ```
 
 * 参数说明
 
 | 参数 | 用途 |
 |---| ---------- |
-| d | 输入数据所在文件夹 |
-| p | 输出数据所在文件夹 |
-| [spaceInterval] | spaceInterval 为实际的距离参数，选择包括0, 200, 400, 800, 1600, 3200六种选择 |
-| e | 角度密度数，默认为2，用于控制种子挑选条件 |
-| x | 时段编号，表示从7.6零时开始的绝对小时编号，例如9 |
-| k | 总边数除以该值得到 min_samples |
+| stdindir | 输入数据所在文件夹 |
+| stdoutdir | 输出数据所在文件夹 |
+| eps | 角度密度数，默认为3，用于控制种子挑选条件 |
+| i | 时段编号，表示从7.6零时开始的绝对小时编号，例如9 |
+| k | 已废弃 |
+| delta | KDE参数，默认为-1，0.5，1，2可选 |
+| city | 所查询的城市，默认为‘BJ’（北京），还包括‘TJ’（天津）‘TS’（唐山）作为可选 |
+| cityLatLngDict[city] | 不同城市的边界信息 |
+| LngSPLIT | 经度分割单元 |
+| LatSPLIT | 纬度分割单元 |
+
+其中min_samples参数在processTask方法中设置，前三天使用5，后面的天数使用3
 
 #### 1.2.4 calGridBCmetric.py
 
@@ -108,8 +114,10 @@ python calGridBCmetric.py
 ```
 # 生成 treeMap 脚本
 
+[indir, outdir, x, tree_num, search_angle, seed_strength, tree_width, jump_length, seed_unit, grid_dirnum, delta, max_distance, grid_size, city]
+	
 # ------ 调用示例 ------
-python treeMapCal.py /datahouse/tripflow/200 /datahouse/tripflow/200 9 0.01 60 0.1 1 3 basic -1
+python treeMapCal.py /datahouse/tripflow/200 /datahouse/tripflow/200 9 0.01 60 0.1 1 3 basic -1 -1 9999 500 BJ
 ```
 
 * 参数说明（本脚本运行不再设置提示参数名，直接从参数数组中顺序读取；参数意义如下，按顺序填入，不可空缺）
@@ -126,6 +134,10 @@ python treeMapCal.py /datahouse/tripflow/200 /datahouse/tripflow/200 9 0.01 60 0
 | 8 | jump_length，控制每次搜索的网格单位，例如 3 表示每次向前搜索三个单位的网格内数据 |
 | 9 | seed_unit，表明种子生成的方式，默认传参为 basic |
 | 10 | grid_dirnum，控制 treemap 的分支数量， -1 表示不添加任何限制 |
+| 11 | delta，控制 KDE 带宽， -1 表示不添加任何限制 |
+| 12 | max_distance，控制 treemap 生成流的最大长度，9999代表长度无限制 |
+| 13 | grid_size，控制城市网格单元的大小 |
+| 13 | city，控制所选择的城市 |
 
 #### 1.3.2 angleClusterCal.py
 
