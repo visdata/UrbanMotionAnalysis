@@ -22,14 +22,14 @@ def processTask(mstype, directory, quantile, n_samples, eps, min_samples):
 	task = MeanshiftPOI(msPROP)
 	clusterNum = task.run(quantile, n_samples)
 
-	msOptSubFix = "_%s_quan_%f_sam_%d" % (mstype, quantile, n_samples)
-	msfile = "meanshiftResult%s" % (msOptSubFix)
+	msOptSuffix = "_%s_quan_%f_sam_%d" % (mstype, quantile, n_samples)
+	msfile = "meanshiftResult%s" % (msOptSuffix)
 	dbPROP = {
 		'clusterNum': clusterNum, 
 		'IDIRECTORY': directory,
 		'ODIRECTORY': directory,
 		'msFile': msfile,
-		'msOptSubFix': msOptSubFix
+		'msOptSuffix': msOptSuffix
 	}
 
 	task = DBScanPOI(dbPROP)

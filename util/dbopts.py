@@ -44,12 +44,12 @@ def connectMYSQL(dbname, passwd):
 	return db, cur
 
 def getBoundaryList(basePath, x, city='beijing'):
-	subfixs = ['cbd', 'community', 'villa', 'shoppingCenter']
+	suffixs = ['cbd', 'community', 'villa', 'shoppingCenter']
 	res = {
-		'prop': subfixs[x],
+		'prop': suffixs[x],
 		'pois': []
 	}
-	with open(os.path.join(basePath, '%s.json' % subfixs[x]), 'r') as f:
+	with open(os.path.join(basePath, '%s.json' % suffixs[x]), 'r') as f:
 		data = json.load(f)
 		res.pois = data['poi']
 	f.close()

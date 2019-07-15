@@ -15,7 +15,7 @@ PROP = {
 		'delta': -1,
 		'IDIRECTORY': '/datahouse',
 		'ODIRECTORY': '/datahouse',
-		'subfix': 1
+		'suffix': 1
 	}
 task = ExtractGridEdges(PROP)
 direction = getDirection(fPoint, tPoint)

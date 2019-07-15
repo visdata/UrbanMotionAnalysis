@@ -18,12 +18,12 @@ class MergeClusterEdges(object):
 		self.INPUT_PATH = os.path.join(PROP['IDIRECTORY'], self.city.lower()+'-byhour-res')
 		self.OUTPUT_PATH = os.path.join(PROP['ODIRECTORY'], self.city.lower()+'-byhour-res')
 		self.index = PROP['index']
-		self.subfix = PROP['subfix']
+		self.suffix = PROP['suffix']
 		self.dataType = PROP['dataType']
 		self.res = []
 
 	def run(self):
-		ifile = os.path.join(self.OUTPUT_PATH, 'tfres-%s-%d-%s' % (self.dataType, self.index, self.subfix))
+		ifile = os.path.join(self.OUTPUT_PATH, 'tfres-%s-%d-%s' % (self.dataType, self.index, self.suffix))
 		#totalNum = self.iterateFile(ifile)
 		totalNum = self.iterateFileWithoutFromTo(ifile)
 		if len(self.res) != 0:
@@ -120,8 +120,8 @@ One edge is consisted of %d records averagely
 				lng = float(linelist[1])
 				lat = float(linelist[2])
 				gid = int(linelist[3])
-				gLat = float(linelist[5])
 				gLng = float(linelist[4])
+				gLat = float(linelist[5])
 
 				# gdirStr: from/to
 				[gdirStr, speed, direction] = linelist[6:9]
@@ -206,7 +206,7 @@ One edge is consisted of %d records averagely
 			:param res: 
 		"""
 
-		ofilename = 'mcres-%s-%d-%s' % (self.dataType, self.index, self.subfix)
+		ofilename = 'mcres-%s-%d-%s' % (self.dataType, self.index, self.suffix)
 		ofile = os.path.join(self.OUTPUT_PATH, ofilename)
 		with open(ofile, 'wb') as f:
 			f.write('\n'.join(self.res))

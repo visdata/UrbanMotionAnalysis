@@ -18,16 +18,15 @@ from util.tripFlow.extractGridEdges import ExtractGridEdges
 from util.tripFlow.dbscanTFIntersections import DBScanTFIntersections
 from util.tripFlow.mergeClusterEdges import MergeClusterEdges
 from util.tripFlow.lineTFIntersections import LineTFIntersections
-
 			
 def processTask(x, eps, K, delta, stdindir, stdoutdir, locs, city, LngSPLIT, LatSPLIT):
-	subfix = "%.2f" % (delta)
+	suffix = "%.2f" % (delta)
 	PROP = {
 		'index': x, 
 		'delta': delta,
 		'IDIRECTORY': stdindir, 
 		'ODIRECTORY': stdoutdir,
-		'subfix': subfix,
+		'suffix': suffix,
 		'locs': locs,
 		'city': city,
 		'LngSPLIT': LngSPLIT,
@@ -46,7 +45,6 @@ def processTask(x, eps, K, delta, stdindir, stdoutdir, locs, city, LngSPLIT, Lat
 	#EPS_INTERVAL = 0.001 if dataType == 'direction' else 0.4
 	EPS_INTERVAL = 0.001 if dataType == 'direction' else 0.4
 
-	clusterofilename = ''
 	iterationTimes = 0
 
 	while (True):
@@ -64,7 +62,7 @@ def processTask(x, eps, K, delta, stdindir, stdoutdir, locs, city, LngSPLIT, Lat
 			'dataType': dataType,
 			'eps': eps,
 			'min_samples': min_samples,
-			'subfix': subfix,
+			'suffix': suffix,
 			'locs': locs,
 			'city':city,
 			'LngSPLIT': LngSPLIT,
@@ -97,20 +95,19 @@ min_samples	= %d
 			iterationTimes += 1
 
 	mergePROP = {
-		'index': x, 
-		'IDIRECTORY': stdindir, 
+		'index': x,
+		'IDIRECTORY': stdindir,
 		'ODIRECTORY': stdoutdir,
 		'dataType': dataType,
-		'subfix': subfix,
+		'suffix': suffix,
 		'city':city
 	}
 	mergeTask = MergeClusterEdges(mergePROP)
 	mergeTask.run()
 
-
 def usage():
 	# /datahouse/zhtan/datasets/VIS-rawdata-region/
-	print "python tripFlowCal.py -d /datasets -p /datasets -e 2 -x 18 -k 24000"
+	print "(by default parameters set explicitly in the code) python tripFlowCal.py -d /datasets -p /datasets -e 2 -x 18 -k 24000"
 
 
 def main(argv):
@@ -144,16 +141,14 @@ def main(argv):
 		2000:[0.0256, 0.02],
 		4000:[0.0512, 0.04],
 		5000:[0.064, 0.05]
-
 	}
-
 
 	gridSize = 500
 	LngSPLIT = gridSizeDict[gridSize][0]
 	LatSPLIT = gridSizeDict[gridSize][1]
 	city = 'BJ'
 	try:
-		argsArray = ["help", 'stdindir=', 'stdoutdir', "eps", "min_samples", "index=", "delta", "kval"]
+		argsArray = ["help", 'stdindir=', 'stdoutdir=', "eps=", "min_samples=", "index=", "delta=", "kval="]
 		opts, args = getopt.getopt(argv, "hd:p:e:m:x:t:k:", argsArray)
 	except getopt.GetoptError as err:
 		print str(err)
@@ -184,7 +179,7 @@ def main(argv):
 	eps = 2 #grid = 100
 	# min_samples = 10
 	delta = -1
-	x = 9
+	# x = 9
 	#K = 24000 initial
 	K=60000
 	#bj tj the first three days
@@ -192,7 +187,7 @@ def main(argv):
 	#K = 10000 ts
 
 	for opt, arg in opts:
-		if opt == '-h':
+		if opt in ("-h", "--help"):
 			usage()
 			sys.exit()
 		elif opt in ("-d", "--stdindir"):
@@ -203,8 +198,8 @@ def main(argv):
 			eps = float(arg)
 		# elif opt in ('-m', '--min_samples'):
 		# 	min_samples = int(arg)
-		elif opt in ('-x', '--index'):
-			x = int(arg)
+		# elif opt in ('-x', '--index'):
+		# 	x = int(arg)
 		elif opt in ('-t' '--delta'):
 			delta = float(arg)
 		elif opt in ('-k' '--kval'):
@@ -222,7 +217,12 @@ def main(argv):
 	# ===	Cluster Opts	===
 	# ''' % (stdindir, stdoutdir, eps, min_samples)
 
-	for i in xrange(1736,1737):
+	# process for the time offset [startX, endX]
+
+	startX = 1736
+	endX = 1736
+
+	for i in xrange(startX,endX+1):
 		processTask(i, eps, K, delta, stdindir, stdoutdir, cityLatLngDict[city], city, LngSPLIT, LatSPLIT)
 
 

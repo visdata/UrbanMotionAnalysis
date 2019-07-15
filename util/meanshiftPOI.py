@@ -24,8 +24,8 @@ class MeanshiftPOI(object):
 			ifile = os.path.join(self.INPUT_PATH, 'paedge_%s.csv' % (self.mstype))
 			self.constructPOIMatrix(ifile)
 		n_clusters_, res = self.meanShiftProcess(quantile, n_samples)
-		msOptSubFix = "_quan_%f_sam_%d" % (quantile, n_samples)
-		self.outputToFile(res, msOptSubFix)
+		msOptSuffix = "_quan_%f_sam_%d" % (quantile, n_samples)
+		self.outputToFile(res, msOptSuffix)
 
 		return n_clusters_
 
@@ -94,7 +94,7 @@ class MeanshiftPOI(object):
 				
 		return n_clusters_, np.hstack((A, B))
 
-	def outputToFile(self, res, msOptSubFix):
+	def outputToFile(self, res, msOptSuffix):
 		"""
 		通用输出文件函数
 			:param self: 
@@ -102,7 +102,7 @@ class MeanshiftPOI(object):
 		"""
 		ostream = '\n'.join(["%s,%s" % (e[0], e[1]) for e in res])
 
-		fileName = 'meanshiftResult_%s%s' % (self.mstype, msOptSubFix)
+		fileName = 'meanshiftResult_%s%s' % (self.mstype, msOptSuffix)
 		ofile = os.path.join(self.OUTPUT_PATH, fileName)
 		with open(ofile, 'wb') as f:
 			f.write(ostream)

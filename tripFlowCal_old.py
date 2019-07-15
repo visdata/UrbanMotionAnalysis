@@ -21,13 +21,13 @@ from util.tripFlow.lineTFIntersections import LineTFIntersections
 
 			
 def processTask(x, eps, K, delta, stdindir, stdoutdir): 
-	subfix = "%.2f" % (delta)
+	suffix = "%.2f" % (delta)
 	PROP = {
 		'index': x, 
 		'delta': delta,
 		'IDIRECTORY': stdindir, 
 		'ODIRECTORY': stdoutdir,
-		'subfix': subfix
+		'suffix': suffix
 	}
 	task = ExtractGridEdges(PROP)
 	res = task.run()
@@ -37,7 +37,7 @@ def processTask(x, eps, K, delta, stdindir, stdoutdir):
 
 	resByDir = res['res']['resByDir']
 	resByCate = res['res']['resByCate']
-	dataType = 'angle'  # 确定是按照方向聚类还是角度聚�?direction, category
+	dataType = 'angle'  # 确定是按照方向聚类还是角度聚�?direction, category
 	EPS_INTERVAL = 0.001 if dataType == 'direction' else 0.4
 
 	clusterofilename = ''
@@ -58,7 +58,7 @@ def processTask(x, eps, K, delta, stdindir, stdoutdir):
 			'dataType': dataType,
 			'eps': eps,
 			'min_samples': min_samples,
-			'subfix': subfix
+			'suffix': suffix
 		}
 		print '''
 ===	Cluster Parameters	===
@@ -90,7 +90,7 @@ min_samples	= %d
 		'IDIRECTORY': stdindir, 
 		'ODIRECTORY': stdoutdir,
 		'dataType': dataType,
-		'subfix': subfix
+		'suffix': suffix
 	}
 	mergeTask = MergeClusterEdges(mergePROP)
 	mergeTask.run()
@@ -151,7 +151,7 @@ def main(argv):
 
 	processTask(x, eps, K, delta, stdindir, stdoutdir)
 
-	# @多进程运行程�?END
+	# @多进程运行程�?END
 	ENDTIME = time.time()
 	print "END TIME: %s" % ENDTIME
 	print "Total minutes: %f" % ((ENDTIME-STARTTIME)/60.0)

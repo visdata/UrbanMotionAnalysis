@@ -12,7 +12,6 @@ import os
 from util.tripFlow.base import parseFormatGID
 from util.tripFlow.LinkList import LinkList
 
-
 class LineTFIntersections(object):
 	def __init__(self, PROP):
 		super(LineTFIntersections, self).__init__()
@@ -20,7 +19,7 @@ class LineTFIntersections(object):
 		# self.INPUT_PATH = os.path.join(PROP['IDIRECTORY'], 'bj-byhour-tf')
 		self.OUTPUT_PATH = os.path.join(PROP['ODIRECTORY'], self.city.lower()+'-byhour-res')
 		self.index = PROP['index']
-		self.subfix = PROP['subfix']
+		self.suffix = PROP['suffix']
 		self.dataType = 'angle'
 		self.resByAng = PROP['resByAng']
 
@@ -101,10 +100,12 @@ Noise Rate:	%f
 
 
 	def iterateResWithoutFromTo(self):
+
 		cateKeys = {0: 'from', 1: 'to'}
 
 		self.resByAng['all'] = {}
 
+		# merge from and to
 		for gid, tripsArray in self.resByAng['from'].iteritems():
 			self.resByAng['all'][gid] = tripsArray
 
@@ -113,7 +114,6 @@ Noise Rate:	%f
 				self.resByAng['all'][gid].extend(tripsArray)
 			else:
 				self.resByAng['all'][gid] = tripsArray
-
 
 		accumulator = 0
 		totalNum, noiseNum = 0, 0
@@ -166,6 +166,7 @@ Noise Rate:	%f
 ''' % (self.dbscanBaseNum, accumulator, totalNum, noiseRate)
 
 		return noiseRate
+		
 	def lineCLusterCalculation(self, angleArray):
 		angleList = [0 for x in xrange(0, 720)]
 		#print(angleArray)
@@ -273,6 +274,7 @@ Noise Rate:	%f
 			
 			# 满足 cluster 条件，否则放弃
 			# print "tfNum: %d" % tfNum
+
 			if tfNum >= N:
 				# print "Current tfNum is %d, lIndex is %d, rIndex is %d, clusterID is %d" % (tfNum, lIndex, rIndex, clusteID)
 				for x in xrange(rIndex, lIndex-1, -1):
@@ -352,7 +354,7 @@ Noise Rate:	%f
 				onerecStr = "%s,%s,%s" % (label, lngLatStr, subInfoStr)
 				ores.append(onerecStr)
 
-		ofilename = 'tfres-%s-%d-%s' % (self.dataType, self.index, self.subfix)
+		ofilename = 'tfres-%s-%d-%s' % (self.dataType, self.index, self.suffix)
 		ofile = os.path.join(self.OUTPUT_PATH, ofilename)
 		with open(ofile, 'wb') as f:
 			f.write('\n'.join(ores))

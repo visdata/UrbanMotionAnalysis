@@ -29,110 +29,104 @@ class ExtractGridEdges(object):
 		self.resByDir = {'e': {}, 'n': {}, 'w': {}, 's': {}}  # 分方向结�?
 		self.resByCate = {'from': {}, 'to': {}}  # 分进出结�?
 		self.singleDirectionCount = 0
-		self.subfix = PROP['subfix']
+		self.suffix = PROP['suffix']
 		self.locs = PROP['locs']
 		self.LngSPLIT = PROP['LngSPLIT']
 		self.LatSPLIT = PROP['LatSPLIT']
     
 	def run(self):
+		# 计算三个小时聚类 (index-4000为开始小时)
 		if self.index >= 4000:
-			for i in range(self.index - 4000, self.index+3-4000):
+			for i in range(self.index - 4000, self.index - 4000+3):
 				ifile = os.path.join(self.INPUT_PATH, 'traveldata-%d' % (i))  # 小时文件
 				self.iterateFileNew(ifile)
+		# 计算单个小时聚类
 		else:
 			ifile = os.path.join(self.INPUT_PATH, 'traveldata-%d' % (self.index))  # 小时文件
 			self.iterateFileNew(ifile)
+		
+		# 增加map matching
+		
 		res = self.outputToFile()
 		return {
 			'count': self.singleDirectionCount,
 			'res': res
 		}
 		
-	def iterateFile(self, file):
-		print "Delta for current running %f" % self.delta
-		count = 0
-		with open(file, 'rb') as f:
-			firstLine = True
-			currentNo = -1
-			fromLat = -1
-			fromLng = -1
-			fromTime = -1
+	# def iterateFile(self, file):
+	# 	print "Delta for current running %f" % self.delta
+	# 	count = 0
+	# 	with open(file, 'rb') as f:
+	# 		firstLine = True
+	# 		currentNo = -1
+	# 		fromLat = -1
+	# 		fromLng = -1
+	# 		fromTime = -1
 
-			for line in f:
-				count += 1
-				line = line.strip('\n')
-				linelist = line.split(',')
+	# 		for line in f:
+	# 			count += 1
+	# 			line = line.strip('\n')
+	# 			linelist = line.split(',')
 				
-				# 旅程标识
-				no = "%s-%s-%s-%s" % (linelist[5], linelist[6], linelist[8], linelist[9])
-				toLat = linelist[3]
-				toLng = linelist[4]
-				toTime = int(linelist[2])
+	# 			# 旅程标识
+	# 			no = "%s-%s-%s-%s" % (linelist[5], linelist[6], linelist[8], linelist[9])
+	# 			toLat = linelist[3]
+	# 			toLng = linelist[4]
+	# 			toTime = int(linelist[2])
 
-				if firstLine:  # 第一行初始化
-					firstLine = False
-					currentNo = no
-					fromLat = toLat
-					fromLng = toLng
-					fromTime = toTime
-				else:
-					if currentNo == no:  # 同一段旅�?
-						# 如果当前点位置不变则继续遍历
-						if (fromLat == toLat and fromLng == toLng) or fromTime == toTime:
-							continue
+	# 			if firstLine:  # 第一行初始化
+	# 				firstLine = False
+	# 				currentNo = no
+	# 				fromLat = toLat
+	# 				fromLng = toLng
+	# 				fromTime = toTime
+	# 			else:
+	# 				if currentNo == no:  # 同一段旅�?
+	# 					# 如果当前点位置不变则继续遍历
+	# 					if (fromLat == toLat and fromLng == toLng) or fromTime == toTime:
+	# 						continue
 
-						fPoint = [float(fromLng), float(fromLat)]
-						tPoint = [float(toLng), float(toLat)]
+	# 					fPoint = [float(fromLng), float(fromLat)]
+	# 					tPoint = [float(toLng), float(toLat)]
 
-						fromGid = getFormatGID(fPoint, self.LngSPLIT, self.LatSPLIT, self.locs)['gid']
-						toGid = getFormatGID(tPoint, self.LngSPLIT, self.LatSPLIT, self.locs)['gid']
-						distance = getRealDistance(fromLng, fromLat, toLng, toLat)
-						speed = distance / (toTime-fromTime)
-						direction = getDirection(fPoint, tPoint)  # w n s e 四个字符之一
+	# 					fromGid = getFormatGID(fPoint, self.LngSPLIT, self.LatSPLIT, self.locs)['gid']
+	# 					toGid = getFormatGID(tPoint, self.LngSPLIT, self.LatSPLIT, self.locs)['gid']
+	# 					distance = getRealDistance(fromLng, fromLat, toLng, toLat)
+	# 					speed = distance / (toTime-fromTime)
+	# 					direction = getDirection(fPoint, tPoint)  # w n s e 四个字符之一
 
-						self.updateResByLine(fPoint, tPoint, fromGid, toGid, direction, speed)
+	# 					self.updateResByLine(fPoint, tPoint, fromGid, toGid, direction, speed)
 						
-						fromLat = toLat
-						fromLng = toLng
-						fromTime = toTime
-					else:  # 新旅程第一个点
-						currentNo = no
-						fromLat = toLat
-						fromLng = toLng
-						fromTime = toTime
+	# 					fromLat = toLat
+	# 					fromLng = toLng
+	# 					fromTime = toTime
+	# 				else:  # 新旅程第一个点
+	# 					currentNo = no
+	# 					fromLat = toLat
+	# 					fromLng = toLng
+	# 					fromTime = toTime
 
-		f.close()
-		print "Total %d records in this file." % (count)
+	# 	f.close()
+	# 	print "Total %d records in this file." % (count)
 
+	# process file, 
 	def iterateFileNew(self, file):
 		print "Delta for current running %f" % self.delta
 		count = 0
 		with open(file, 'rb') as f:
 			firstLine = True
-			currentNo = -1
-			lastDevice = -1
 
 			deviceDirectionDict = {}
-			deviceDirectionToDict = {}
+			# deviceDirectionToDict = {}
 
 			for line in f:
-
-
 				count += 1
 				line = line.strip('\n')
 				linelist = line.split(',')
 				#print(getRealDistance(linelist[5], linelist[6], linelist[4], linelist[3])/(linelist[2] - linelist[7]))
 				currentDevice = linelist[1]
 				if firstLine:
-					lastDevice = currentDevice
 					firstLine = False
-
-
-				# if lastDevice != currentDevice:
-				# 	for key, value in deviceDirectionToDict[lastDevice]:
-				# 		self.updateResByLine(value)
-
-				lastDevice = currentDevice
 
 				if not deviceDirectionDict.has_key(currentDevice):
 					deviceDirectionDict[currentDevice] = {}
@@ -140,7 +134,7 @@ class ExtractGridEdges(object):
 				# if not deviceDirectionToDict.has_key(currentDevice):
 				# 	deviceDirectionToDict[currentDevice] = {}
 
-				#left
+				# left
 				fromLat = linelist[6]
 				fromLng = linelist[5]
 				fromTime = int(linelist[7])
@@ -166,7 +160,6 @@ class ExtractGridEdges(object):
 				if not deviceDirectionDict[currentDevice].has_key(position):
 					# 当前位置没有被记录过, 那么要记录当前位置的方向。
 					deviceDirectionDict[currentDevice][position] = True
-
 					self.updateResByLine(fPoint, tPoint, fromGid, toGid, direction, speed)
 
 				# right
@@ -196,9 +189,7 @@ class ExtractGridEdges(object):
 					# 当前位置没有被记录过, 那么要记录当前位置的方向。
 
 					deviceDirectionDict[currentDevice][position] = True
-
 					self.updateResByLine(fPoint, tPoint, fromGid, toGid, direction, speed)
-
 
 				# position = toLat + '-' + toLng
 				# if not deviceDirectionToDict[currentDevice].has_key(position):
@@ -207,18 +198,11 @@ class ExtractGridEdges(object):
 				# 	if deviceDirectionDict[currentDevice][position][7] < distance:
 				# 		deviceDirectionDict[currentDevice][position] =  [fPoint, tPoint, fromGid, toGid, direction, speed, 'to', distance]
 
-
-
-
-
-
-
 		f.close()
 		print "Total %d records in this file." % (count)
 
 	def updateResByLine(self, fPoint, tPoint, fromGid, toGid, direction, speed, type='all'):
 		self.singleDirectionCount += 1
-
 
 		# 处理方向与网格间的相交点
 		fGidIPoint, tGidIPoint = self.getGridIntersection(fPoint, tPoint, fromGid, toGid, direction)
@@ -245,12 +229,13 @@ class ExtractGridEdges(object):
 		# END
 
 		# 处理二：分出入的旅途元数据（归一化向量）存储
-		fX = fPoint[1] - fGidIPoint[1]
-		fY = fPoint[0] - fGidIPoint[0]
-		tX = tPoint[1] - tGidIPoint[1]
-		tY = tPoint[0] - tGidIPoint[0]
-		fiDis = sqrt(pow(fX, 2) + pow(fY, 2))
-		tiDis = sqrt(pow(tX, 2) + pow(tY, 2))
+
+		# fX = fPoint[1] - fGidIPoint[1]
+		# fY = fPoint[0] - fGidIPoint[0]
+		# tX = tPoint[1] - tGidIPoint[1]
+		# tY = tPoint[0] - tGidIPoint[0]
+		# fiDis = sqrt(pow(fX, 2) + pow(fY, 2))
+		# tiDis = sqrt(pow(tX, 2) + pow(tY, 2))
 
 		# 计算边方向及其绝对距�?
 		vecY = tPoint[0] - fPoint[0]
@@ -269,6 +254,8 @@ class ExtractGridEdges(object):
 			fangle = acos(angleLat) * 180 / pi
 			if angleLng < 0 and fangle > 0.1:
 				fangle = 360 - fangle
+
+			# where we can put map-matching code
 
 			fromCVecStr = "%s,%d,from,%f,%s,%.1f,1" % (fCircleIPointStr, fromGid, speed, direction, fangle)
 
@@ -305,6 +292,8 @@ class ExtractGridEdges(object):
 			if angleLng < 0 and fangle > 0.1:
 				tangle = 360 - tangle
 
+			# where we can put map-matching code
+
 			toCVecStr = "%s,%d,to,%f,%s,%.1f,1" % (tCircleIPointStr, toGid, speed, direction, tangle)
 
 
@@ -315,6 +304,8 @@ class ExtractGridEdges(object):
 				self.resByCate['to'][toGid].append(toCVecStr)
 			else:
 				self.resByCate['to'][toGid] = [toCVecStr]
+
+			
 
 			# if toGid == 59670:
 			# 	print("to:")
@@ -378,14 +369,14 @@ class ExtractGridEdges(object):
 		tLat = ptRes['lat']
 
 		# 计算网格方边交点
-		if direction in ['n', 's']:  # 与平行维度线相交
+		if direction in ['n', 's']:  # 与纬度线相交
 			k = (toLng - fromLng) / (toLat - fromLat)
 			b1, b2 = fLng, tLng
 			fIlng = b1 + (fGidLine - fromLat) * k
 			fGIPoint = [fIlng, fGidLine]
 			tIlng = b2 + (tGidLine - fromLat) * k
 			tGIPoint = [tIlng, tGidLine]
-		else:  # 与平行经度线相交
+		else:  # 与经度线相交
 			k = (toLat - fromLat) / (toLng - fromLng)
 			b1, b2 = fLat, tLat
 			fIlat = b1 + (fGidLine - fromLng) * k
@@ -417,13 +408,13 @@ class ExtractGridEdges(object):
 		
 		print "Total %d gids and %d records in four directions" % (gidNum, recNum)
 
-		ofile = os.path.join(self.OUTPUT_PATH, 'triprec-direction-%d-%s' % (self.index, self.subfix))
+		ofile = os.path.join(self.OUTPUT_PATH, 'triprec-direction-%d-%s' % (self.index, self.suffix))
 		with open(ofile, 'wb') as f:
 			f.write('\n'.join(ores))
 		f.close()
 
 		# smooth - Category and angle
-		ofile = os.path.join(self.OUTPUT_PATH, 'triprec-smooth-%d-%s.json' % (self.index, self.subfix))
+		ofile = os.path.join(self.OUTPUT_PATH, 'triprec-smooth-%d-%s.json' % (self.index, self.suffix))
 		with open(ofile, 'wb') as f:
 			json.dump(self.resByCate, f)
 		f.close()

@@ -9,13 +9,13 @@ import getopt
 from util.dbscanPOI import DBScanPOI
 
 
-def processTask(directory, clusterNum, eps, min_samples, msfile, msOptSubFix): 
+def processTask(directory, clusterNum, eps, min_samples, msfile, msOptSuffix): 
 	PROP = {
 		'clusterNum': clusterNum, 
 		'IDIRECTORY': directory,
 		'ODIRECTORY': directory,
 		'msFile': msfile,
-		'msOptSubFix': msOptSubFix
+		'msOptSuffix': msOptSuffix
 	}
 
 	task = DBScanPOI(PROP)
@@ -51,7 +51,7 @@ def main(argv):
 	msnum = 6
 	eps, min_samples = 0.01, 10
 	msfile = "meanshiftResult_c12_t1_quan_0.020000_sam_500"
-	msOptSubFix = "_c12_t1_quan_0.020000_sam_500"
+	msOptSuffix = "_c12_t1_quan_0.020000_sam_500"
 
 	for opt, arg in opts:
 		if opt == '-h':
@@ -73,7 +73,7 @@ def main(argv):
 	STARTTIME = time.time()
 	print "%s: Start approach at %s" % (city, STARTTIME)
 
-	processTask(directory, msnum, eps, min_samples, msfile, msOptSubFix)
+	processTask(directory, msnum, eps, min_samples, msfile, msOptSuffix)
 	print "END TIME: %s" % time.time()
 
 

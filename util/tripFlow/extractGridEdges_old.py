@@ -25,10 +25,10 @@ class ExtractGridEdges(object):
 		self.OUTPUT_PATH = os.path.join(PROP['ODIRECTORY'], 'bj-byhour-rec')
 		self.index = PROP['index']
 		self.delta = PROP['delta'] * PROP['delta'] * 2 if PROP['delta'] > 0 else -1.0
-		self.resByDir = {'e': {}, 'n': {}, 'w': {}, 's': {}}  # 分方向结�?
-		self.resByCate = {'from': {}, 'to': {}}  # 分进出结�?
+		self.resByDir = {'e': {}, 'n': {}, 'w': {}, 's': {}}  # 分方向结�?
+		self.resByCate = {'from': {}, 'to': {}}  # 分进出结�?
 		self.singleDirectionCount = 0
-		self.subfix = PROP['subfix']
+		self.suffix = PROP['suffix']
     
 	def run(self):
 		ifile = os.path.join(self.INPUT_PATH, 'traveldata-%d' % (self.index))  # 小时文件
@@ -68,7 +68,7 @@ class ExtractGridEdges(object):
 					fromLng = toLng
 					fromTime = toTime
 				else:
-					if currentNo == no:  # 同一段旅�?
+					if currentNo == no:  # 同一段旅�?
 						# 如果当前点位置不变则继续遍历
 						if (fromLat == toLat and fromLng == toLng) or fromTime == toTime:
 							continue
@@ -129,7 +129,7 @@ class ExtractGridEdges(object):
 		fiDis = sqrt(pow(fX, 2) + pow(fY, 2))
 		tiDis = sqrt(pow(tX, 2) + pow(tY, 2))
 
-		# 计算边方向及其绝对距�?
+		# 计算边方向及其绝对距�?
 		vecY = tPoint[0] - fPoint[0]
 		vecX = tPoint[1] - fPoint[1]
 		vecDis = sqrt(pow(vecY, 2) + pow(vecX, 2))
@@ -150,7 +150,7 @@ class ExtractGridEdges(object):
 		else:
 			self.resByCate['from'][fromGid] = [fromCVecStr]
 
-		# KDE 处理 from 相邻24个小格方向问�?
+		# KDE 处理 from 相邻24个小格方向问�?
 		if self.delta > 0:
 			for x in xrange(-2, 3):
 				for y in xrange(-2, 3):
@@ -178,7 +178,7 @@ class ExtractGridEdges(object):
 		else:
 			self.resByCate['to'][toGid] = [toCVecStr]
 
-		# KDE 处理 to 相邻24个小格方向问�?
+		# KDE 处理 to 相邻24个小格方向问�?
 		if self.delta > 0:
 			for x in xrange(-2, 3):
 				for y in xrange(-2, 3):
@@ -202,8 +202,8 @@ class ExtractGridEdges(object):
 		"""
 		计算交叉点，所有点格式均为 [lng, lat]
 			:param self: 
-			:param fPoint: 来源�?
-			:param tPoint: 到达�?
+			:param fPoint: 来源�?
+			:param tPoint: 到达�?
 			:param fromGid: 来源 gid
 			:param toGid: 到达 gid
 			:param direction: 方向
@@ -256,13 +256,13 @@ class ExtractGridEdges(object):
 			:param res: 
 		"""
 		
-		# 待更�?
+		# 待更�?
 		ores = []
 		i = 0
 		gidNum, recNum = 0, 0
 		memres = [[] for x in xrange(0, 4)]
 		for key, val in self.resByDir.iteritems():  # 东西南北四个方向遍历
-			for subkey ,subval in val.iteritems():  # 每个方向里不�?gid 数据遍历，subval 为数�?
+			for subkey ,subval in val.iteritems():  # 每个方向里不�?gid 数据遍历，subval 为数�?
 				gidNum += 1
 				recNum += len(subval)
 				ores.append('\n'.join(subval))
@@ -271,13 +271,13 @@ class ExtractGridEdges(object):
 		
 		print "Total %d gids and %d records in four directions" % (gidNum, recNum)
 
-		ofile = os.path.join(self.OUTPUT_PATH, 'triprec-direction-%d-%s' % (self.index, self.subfix))
+		ofile = os.path.join(self.OUTPUT_PATH, 'triprec-direction-%d-%s' % (self.index, self.suffix))
 		with open(ofile, 'wb') as f:
 			f.write('\n'.join(ores))
 		f.close()
 
 		# smooth - Category and angle
-		ofile = os.path.join(self.OUTPUT_PATH, 'triprec-smooth-%d-%s.json' % (self.index, self.subfix))
+		ofile = os.path.join(self.OUTPUT_PATH, 'triprec-smooth-%d-%s.json' % (self.index, self.suffix))
 		with open(ofile, 'wb') as f:
 			json.dump(self.resByCate, f)
 		f.close()
