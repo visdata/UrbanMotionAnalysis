@@ -9,19 +9,22 @@
 
 import os
 import json
-from math import sqrt, pow, acos, pi
 import math
+import getopt
+import sys
+import time
+import logging
 
 def processTask(stdoutdir, locs, city, gridSize, LngSPLIT, LatSPLIT):
 
-	self.roadNetworkEdges = {}
+	roadNetworkEdges = {}
 
 	LNGNUM = int( (locs['east'] - locs['west']) / LngSPLIT + 1 )
 	LATNUM = int( (locs['north'] - locs['south']) / LatSPLIT + 1 )
 
-	for gid = xrange(0, LNGNUM*LATNUM):
+	for gid in xrange(0, LNGNUM*LATNUM):
 
-		self.roadNetworkEdges[gid] = []
+		roadNetworkEdges[gid] = []
 
 		latind = int(gid / LNGNUM)
 		lngind = gid - latind * LNGNUM
@@ -34,32 +37,30 @@ def processTask(stdoutdir, locs, city, gridSize, LngSPLIT, LatSPLIT):
 
 		# emulated road edge from west to east
 		roadNetworkEdgeVecStr = "%f,%f,%f,%f,%.1f" % (lngcen - LngSPLIT/2.0, latcen, lngcen + LngSPLIT/2.0, latcen, 0)
-		self.roadNetworkEdges[gid].append(roadNetworkEdgeVecStr)
+		roadNetworkEdges[gid].append(roadNetworkEdgeVecStr)
 
 		# emulated road edge from east to west
 		roadNetworkEdgeVecStr = "%f,%f,%f,%f,%.1f" % (lngcen + LngSPLIT/2.0, latcen, lngcen - LngSPLIT/2.0, latcen, 180)
-		self.roadNetworkEdges[gid].append(roadNetworkEdgeVecStr)
+		roadNetworkEdges[gid].append(roadNetworkEdgeVecStr)
 		
 		# emulated road edge from south to north
 		roadNetworkEdgeVecStr = "%f,%f,%f,%f,%.1f" % (lngcen, latcen - LatSPLIT/2.0, lngcen, latcen + LatSPLIT/2.0, 90)
-		self.roadNetworkEdges[gid].append(roadNetworkEdgeVecStr)
+		roadNetworkEdges[gid].append(roadNetworkEdgeVecStr)
 
 		# emulated road edge from north to south
 		roadNetworkEdgeVecStr = "%f,%f,%f,%f,%.1f" % (lngcen, latcen + LatSPLIT/2.0, lngcen, latcen - LatSPLIT/2.0, 270)
-		self.roadNetworkEdges[gid].append(roadNetworkEdgeVecStr)
+		roadNetworkEdges[gid].append(roadNetworkEdgeVecStr)
 
 	# JSON
 	ofile = os.path.join(stdoutdir, 'road-network-edges-%s-%d.json' % (city, gridSize))
 	with open(ofile, 'wb') as f:
-		json.dump(self.roadNetworkEdges, f)
+		json.dump(roadNetworkEdges, f)
 	f.close()
 
 	return {
-		'roadNetworkEdges': self.roadNetworkEdges
+		'roadNetworkEdges': roadNetworkEdges
 	}
 
-
-	
 
 def usage():
 	print "(by default parameters set explicitly in the code) python testRoadNetworkEdges.py -p /dir-of-map -c 'BJ'"
@@ -110,7 +111,7 @@ def main(argv):
 		usage()
 		sys.exit(2)
 
-	stdoutdir = '/datahouse/tripflow/2019-30-800-'+city
+	stdoutdir = '/datahouse/tripflow/maps/'+city
 
 	for opt, arg in opts:
 		if opt in ("-h", "--help"):
@@ -118,10 +119,9 @@ def main(argv):
 			sys.exit()
 		elif opt in ("-e", "--city"):
 			city = str(arg)
-			stdoutdir = '/datahouse/tripflow/2019-30-800-'+city
+			stdoutdir = '/datahouse/tripflow/maps/'+city
 		elif opt in ('-p', '--stdoutdir'):
 			stdoutdir = arg
-		
 
 	STARTTIME = time.time()
 	print "Start approach at %s" % STARTTIME
