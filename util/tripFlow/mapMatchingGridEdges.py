@@ -37,6 +37,8 @@ class MapMatchingGridEdges(object):
 
 		self.resByCateMapped = {}
 
+		matchedGidNum = 0
+
 		for dir_key in self.resByCate.keys():
 			for id_key in self.resByCate[dir_key].keys():
 				for vecStr in self.resByCate[dir_key][id_key]:
@@ -59,7 +61,11 @@ class MapMatchingGridEdges(object):
 							self.resByCateMapped[dir_key][matchedEdge['gid']].append(matchedVecStr)
 						else:
 							self.resByCateMapped[dir_key][matchedEdge['gid']] = [matchedVecStr]
-		
+
+				matchedGidNum += 1
+				if matchedGidNum % 10 == 0:
+					print "Match %d grids..." % matchedGidNum
+
 		return self.resByCateMapped
 
 	def mapMatchingEdge(self, point, gid, angle, roadEdgesData, gridSearchRange):
