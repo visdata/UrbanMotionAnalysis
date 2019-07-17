@@ -39,7 +39,12 @@ class MapMatchingGridEdges(object):
 
 		matchedGidNum = 0
 
+		STARTTIME = time.time()
+
 		for dir_key in self.resByCate.keys():
+
+			print "Matching %d grids in %s direction:" % (len(self.resByCate[dir_key].keys()), dir_key)
+
 			for id_key in self.resByCate[dir_key].keys():
 				for vecStr in self.resByCate[dir_key][id_key]:
 					linelist = vecStr.split(',')
@@ -64,7 +69,8 @@ class MapMatchingGridEdges(object):
 
 				matchedGidNum += 1
 				if matchedGidNum % 10 == 0:
-					print "Match %d grids..." % matchedGidNum
+					ENDTIME = time.time()
+					print "Match %d grids in %f seconds..." % (matchedGidNum, ENDTIME-STARTTIME)
 
 		return self.resByCateMapped
 
