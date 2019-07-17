@@ -18,7 +18,6 @@ from util.tripFlow.mapMatchingGridEdges import MapMatchingGridEdges
 from math import sqrt, pow, acos, pi
 import math
 	
-
 class ExtractGridEdgesMM(object):
 	def __init__(self, PROP):
 		super(ExtractGridEdgesMM, self).__init__()
@@ -34,6 +33,7 @@ class ExtractGridEdgesMM(object):
 		self.locs = PROP['locs']
 		self.LngSPLIT = PROP['LngSPLIT']
 		self.LatSPLIT = PROP['LatSPLIT']
+		self.gridSize = PROP['gridSize']
     
 	def run(self):
 		# 计算三个小时聚类 (index-4000为开始小时)
@@ -48,9 +48,22 @@ class ExtractGridEdgesMM(object):
 		
 		# 增加map matching
 
+		# 加载路网数据
+		mfilename = 'road-network-edges-%s-%d.json' % (self.city,self.gridSize)
+		mfilename = os.path.join("/datahouse/tripflow/maps", self.city, mfilename)
+		with open(mfilename, 'rb') as f:
+			roadEdgesData = json.load(f)
+		f.close()
+
+		# 当前小边集合 
 		matchingPROP = {
-			'resByCate': self.resByCate
+			'resByCate': self.resByCate,
+			'roadEdgesData': roadEdgesData,
+			'LngSPLIT': self.LngSPLIT,
+			'LatSPLIT': self.LatSPLIT,
+			'locs': self.locs
 		}
+
 		task = MapMatchingGridEdges(matchingPROP)
 		self.resByCate = task.run()
 		
@@ -301,7 +314,6 @@ class ExtractGridEdgesMM(object):
 
 			toCVecStr = "%s,%d,to,%f,%s,%.1f,1" % (tPointStr, toGid, speed, direction, tangle)
 
-
 			# if toGid == 59670:
 			# 	print(fPoint, tPoint, fromGid, toGid, direction, speed)
 			# 	print(toCVecStr)
@@ -390,7 +402,7 @@ class ExtractGridEdgesMM(object):
 			tGIPoint = [tGidLine,tIlat]
 
 		return fGIPoint, tGIPoint
-	
+
 	def outputToFile(self):
 		"""
 		通用输出文件函数

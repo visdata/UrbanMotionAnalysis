@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 # 
 
-from math import radians, cos, sin, asin, sqrt  
+from math import radians, cos, sin, asin, sqrt, pi 
+import math
 
 def getRealDistance(lon1, lat1, lon2, lat2):  # 经度1，纬度1，经度2，纬度2 （十进制度数）  
 	""" 
@@ -103,7 +104,8 @@ def parseFormatGID(id, direction='n', LngSPLIT=0.0064, LatSPLIT=0.005, locs={
 		'pid': -1,
 		'y': latind,
 		'x': lngind,
-		'dlinePoint': dlineDict[direction]
+		'dlinePoint': dlineDict[direction],
+		'dlineDict': dlineDict
 	}
 
 
@@ -141,3 +143,89 @@ def cosVector(x, y):
 		result3+=y[i]**2     #sum(Y*Y)
 
 	return result1 / ((result2*result3)**0.5)
+
+def getGIDsByOffsets(gid, maxOffset, LngSPLIT=0.0064, LatSPLIT=0.005, locs={
+	'north': 41.0500,  # 41.050,
+	'south': 39.4570,  # 39.457,
+	'west': 115.4220,  # 115.422,
+	'east': 117.5000,  # 117.500
+}):
+	"""
+	[NEW] 根据中心格子gid，给出附近maxOffset内格子列表，共(2*maxOffset+1)^2个
+	"""
+
+	iter_Gids = []
+
+	LNGNUM = int( (locs['east'] - locs['west']) / LngSPLIT + 1 )
+	LATNUM = int( (locs['north'] - locs['south']) / LatSPLIT + 1 )
+
+	latind = int(gid/LNGNUM)
+	lngind = gid - latind * LNGNUM
+
+	for iter_latind in range(max(latind - maxOffset, 0), min(latind + maxOffset+1, LATNUM)):
+		for iter_lngind in range(max(lngind - maxOffset, 0), min(lngind + maxOffset+1, LNGNUM)):
+			iter_Gids.append(iter_latind * LNGNUM + iter_lngind)
+
+	return iter_Gids
+
+def getGridIntersection(point, angle, gid, LngSPLIT=0.0064, LatSPLIT=0.005, locs={
+	'north': 41.0500,  # 41.050,
+	'south': 39.4570,  # 39.457,
+	'west': 115.4220,  # 115.422,
+	'east': 117.5000,  # 117.500
+}):
+		"""
+		计算交叉点，所有点格式均为 [lng, lat]
+
+		"""
+
+		sGIPoint, eGIPoint = [], []
+
+		gridInfo = parseFormatGID(gid, 'n', LngSPLIT, LatSPLIT, locs)
+		
+		dlines = ['n', 's', 'w', 'e']
+		intersections = {}
+
+		# 处理 竖线 特殊情况
+		if angle == 90:
+			sGIPoint=[point[0],gridInfo['dlineDict']['s']]
+			eGIPoint=[point[0],gridInfo['dlineDict']['n']]
+			return sGIPoint, eGIPoint
+		elif angle == 270:
+			sGIPoint=[point[0],gridInfo['dlineDict']['n']]
+			eGIPoint=[point[0],gridInfo['dlineDict']['s']]
+			return sGIPoint, eGIPoint
+
+		#直线方程 ax+by+c = 0
+		a = math.tan(math.pi * angle/180)
+		b = -1
+		c = point[1]- a * point[0]
+
+		# 找交点
+		for dline in dlines:
+			if dline == 'n' or dline == 's':
+				y = gridInfo['dlineDict'][dline]
+				x = (-b * y - c)/a
+				if (x >= gridInfo['dlineDict']['w']) and (x <= gridInfo['dlineDict']['e']):
+					intersections[dline] = [x,y]
+			elif dline == 'w' or dline == 'e':
+				x = gridInfo['dlineDict'][dline]
+				y = (-a * x - c)/b
+				if (x > gridInfo['dlineDict']['s']) and (x < gridInfo['dlineDict']['n']):
+					intersections[dline] = [x,y]
+
+		keys = intersections.keys()
+		if len(keys)!=2:
+			print 'getGridIntersection obtains incorrect number of intersections: ' + str(len(keys))
+		
+		sGIPoint = intersections[keys[0]]
+		eGIPoint = intersections[keys[1]]
+
+		# 起始/终止点需要对调
+		if (point[0]-sGIPoint[0]) * math.cos(math.pi * angle/180) < 0:
+			tmpPoint = sGIPoint
+			sGIPoint = eGIPoint
+			eGIPoint = tmpPoint
+
+		return sGIPoint, eGIPoint
+	

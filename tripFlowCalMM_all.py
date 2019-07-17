@@ -15,14 +15,15 @@ import logging
 import getopt
 from util.tripFlow.extractGridEdgesMM import ExtractGridEdgesMM
 from util.tripFlow.dbscanTFIntersections import DBScanTFIntersections
-from util.tripFlow.mergeClusterEdges import MergeClusterEdges
-from util.tripFlow.lineTFIntersections import LineTFIntersections
+from util.tripFlow.mergeClusterEdgesMM import MergeClusterEdgesMM
+from util.tripFlow.lineTFAggregationsMM import LineTFAggregationsMM
 			
-def processTask(x, eps, K, delta, stdindir, stdoutdir, locs, city, LngSPLIT, LatSPLIT):
+def processTask(x, eps, K, delta, stdindir, stdoutdir, locs, city, LngSPLIT, LatSPLIT, gridSize):
 	suffix = "%.2f" % (delta)
 	PROP = {
 		'index': x, 
 		'delta': delta,
+		'gridSize': gridSize,
 		'IDIRECTORY': stdindir, 
 		'ODIRECTORY': stdoutdir,
 		'suffix': suffix,
@@ -35,63 +36,36 @@ def processTask(x, eps, K, delta, stdindir, stdoutdir, locs, city, LngSPLIT, Lat
 	res = task.run()
 	
 	count = res['count']
-	#min_samples = int(count / K) if count > K else 1
 	min_samples = 2
 
-	resByDir = res['res']['resByDir']
 	resByCate = res['res']['resByCate']
 	dataType = 'angle'  # 确定是按照方向聚类还是角度聚�?direction, category
-	#EPS_INTERVAL = 0.001 if dataType == 'direction' else 0.4
-	EPS_INTERVAL = 0.001 if dataType == 'direction' else 0.4
-
-	iterationTimes = 0
-
-	while (True):
-		if (iterationTimes == 50):
-			eps -= EPS_INTERVAL*50
-			min_samples -= 5
-			iterationTimes = 0
 		
-		clusterPROP = {
-			'index': x, 
-			'ODIRECTORY': stdoutdir,
-			'resByDir': resByDir,
-			'resByCate': resByCate,
-			'resByAng': resByCate,
-			'dataType': dataType,
-			'eps': eps,
-			'min_samples': min_samples,
-			'suffix': suffix,
-			'locs': locs,
-			'city':city,
-			'LngSPLIT': LngSPLIT,
-			'LatSPLIT': LatSPLIT
-		}
-		print '''
-===	Cluster Parameters	===
-index	= %d
-stdindir	= %s
-stdoutdir	= %s
-eps		= %f
-min_samples	= %d
-===	Cluster Parameters	===
-''' % (x, stdindir, stdoutdir, eps, min_samples)
+	clusterPROP = {
+		'index': x, 
+		'ODIRECTORY': stdoutdir,
+		'resByAng': resByCate,
+		'dataType': dataType,
+		'eps': eps,
+		'min_samples': min_samples,
+		'suffix': suffix,
+		'locs': locs,
+		'city':city,
+		'LngSPLIT': LngSPLIT,
+		'LatSPLIT': LatSPLIT
+	}
 
-		# 角度聚类单独处理
-		if dataType == 'angle':
-			clusterTask = LineTFIntersections(clusterPROP)
-			noiseRate, clusterofilename = clusterTask.run()
-			break
+	print '''
+		===	Cluster Parameters	===
+		index	= %d
+		stdindir	= %s
+		stdoutdir	= %s
+		min_samples	= %d
+		===	Cluster Parameters	===
+		''' % (x, stdindir, stdoutdir, min_samples)
 
-		clusterTask = DBScanTFIntersections(clusterPROP)
-		noiseRate, clusterofilename = clusterTask.run()
-
-		if noiseRate <= 0.5:
-			print(iterationTimes)
-			break
-		else:
-			eps += EPS_INTERVAL
-			iterationTimes += 1
+	clusterTask = LineTFAggregationsMM(clusterPROP)
+	noiseRate, clusterofilename = clusterTask.run()
 
 	mergePROP = {
 		'index': x,
@@ -101,7 +75,7 @@ min_samples	= %d
 		'suffix': suffix,
 		'city':city
 	}
-	mergeTask = MergeClusterEdges(mergePROP)
+	mergeTask = MergeClusterEdgesMM(mergePROP)
 	mergeTask.run()
 
 def usage():
@@ -222,7 +196,7 @@ def main(argv):
 	endX = 1736
 
 	for i in xrange(startX,endX+1):
-		processTask(i, eps, K, delta, stdindir, stdoutdir, cityLatLngDict[city], city, LngSPLIT, LatSPLIT)
+		processTask(i, eps, K, delta, stdindir, stdoutdir, cityLatLngDict[city], city, LngSPLIT, LatSPLIT, gridSize)
 
 
 	#processTask(x, eps, K, delta, stdindir, stdoutdir)
