@@ -56,13 +56,13 @@ def processTask(x, eps, K, delta, stdindir, stdoutdir, locs, city, LngSPLIT, Lat
 	}
 
 	print '''
-		===	Cluster Parameters	===
-		index	= %d
-		stdindir	= %s
-		stdoutdir	= %s
-		min_samples	= %d
-		===	Cluster Parameters	===
-		''' % (x, stdindir, stdoutdir, min_samples)
+===	Cluster Parameters	===
+index	= %d
+stdindir	= %s
+stdoutdir	= %s
+min_samples	= %d
+===	Cluster Parameters	===
+''' % (x, stdindir, stdoutdir, min_samples)
 
 	clusterTask = LineTFAggregationsMM(clusterPROP)
 	noiseRate, clusterofilename = clusterTask.run()

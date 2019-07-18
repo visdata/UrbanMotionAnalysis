@@ -203,7 +203,8 @@ def getGridIntersection(point, angle, gid, LngSPLIT=0.0064, LatSPLIT=0.005, locs
 
 		# 找交点
 		for dline in dlines:
-			if dline == 'n' or dline == 's':
+			
+			if (dline == 'n' or dline == 's') and (a != 0):
 				y = gridInfo['dlineDict'][dline]
 				x = (-b * y - c)/a
 				if (x >= gridInfo['dlineDict']['w']) and (x <= gridInfo['dlineDict']['e']):
@@ -211,12 +212,13 @@ def getGridIntersection(point, angle, gid, LngSPLIT=0.0064, LatSPLIT=0.005, locs
 			elif dline == 'w' or dline == 'e':
 				x = gridInfo['dlineDict'][dline]
 				y = (-a * x - c)/b
-				if (x > gridInfo['dlineDict']['s']) and (x < gridInfo['dlineDict']['n']):
+				if (y > gridInfo['dlineDict']['s']) and (y < gridInfo['dlineDict']['n']):
 					intersections[dline] = [x,y]
 
 		keys = intersections.keys()
 		if len(keys)!=2:
 			print 'getGridIntersection obtains incorrect number of intersections: ' + str(len(keys))
+			print 'point: %s, angle: %.1f, grid: %s'%(str(point), angle, str(gridInfo['dlineDict']))
 		
 		sGIPoint = intersections[keys[0]]
 		eGIPoint = intersections[keys[1]]

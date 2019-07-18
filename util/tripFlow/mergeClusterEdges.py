@@ -23,7 +23,7 @@ class MergeClusterEdges(object):
 		self.res = []
 
 	def run(self):
-		ifile = os.path.join(self.OUTPUT_PATH, 'tfres-%s-%d-%s' % (self.dataType, self.index, self.suffix))
+		ifile = os.path.join(self.INPUT_PATH, 'tfres-%s-%d-%s' % (self.dataType, self.index, self.suffix))
 		#totalNum = self.iterateFile(ifile)
 		totalNum = self.iterateFileWithoutFromTo(ifile)
 		if len(self.res) != 0:

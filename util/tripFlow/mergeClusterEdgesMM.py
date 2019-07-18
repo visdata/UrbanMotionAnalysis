@@ -15,15 +15,15 @@ class MergeClusterEdgesMM(object):
 	def __init__(self, PROP):
 		super(MergeClusterEdgesMM, self).__init__()
 		self.city = PROP['city']
-		self.INPUT_PATH = os.path.join(PROP['IDIRECTORY'], self.city.lower()+'-byhour-res')
-		self.OUTPUT_PATH = os.path.join(PROP['ODIRECTORY'], self.city.lower()+'-byhour-res')
+		self.INPUT_PATH = os.path.join(PROP['IDIRECTORY'], self.city.lower()+'-byhour-res-mapped')
+		self.OUTPUT_PATH = os.path.join(PROP['ODIRECTORY'], self.city.lower()+'-byhour-res-mapped')
 		self.index = PROP['index']
 		self.suffix = PROP['suffix']
 		self.dataType = PROP['dataType']
 		self.res = []
 
 	def run(self):
-		ifile = os.path.join(self.OUTPUT_PATH, 'tfres-%s-%d-%s' % (self.dataType, self.index, self.suffix))
+		ifile = os.path.join(self.INPUT_PATH, 'tfres-%s-%d-%s' % (self.dataType, self.index, self.suffix))
 		#totalNum = self.iterateFile(ifile)
 		totalNum = self.iterateFileWithoutFromTo(ifile)
 		if len(self.res) != 0:

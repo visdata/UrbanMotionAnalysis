@@ -9,6 +9,7 @@
 
 import os
 import json
+import time
 from math import sqrt, pow, acos, pi
 from util.tripFlow.base import getFormatGID
 from util.tripFlow.base import getGIDsByOffsets
@@ -26,7 +27,7 @@ class MapMatchingGridEdges(object):
 		self.LatSPLIT = PROP['LatSPLIT']
 		self.locs = PROP['locs']
 
-		self.gridSearchRange = 2
+		self.gridSearchRange = 1
 		self.angleMatchingRatio = 1
 		self.distMatchingRatio = 1
 
@@ -35,7 +36,7 @@ class MapMatchingGridEdges(object):
 	def run(self):
 		# map matching 
 
-		self.resByCateMapped = {}
+		self.resByCateMapped = {'from': {}, 'to': {}}
 
 		matchedGidNum = 0
 
@@ -68,7 +69,7 @@ class MapMatchingGridEdges(object):
 							self.resByCateMapped[dir_key][matchedEdge['gid']] = [matchedVecStr]
 
 				matchedGidNum += 1
-				if matchedGidNum % 10 == 0:
+				if matchedGidNum % 100 == 0:
 					ENDTIME = time.time()
 					print "Match %d grids in %f seconds..." % (matchedGidNum, ENDTIME-STARTTIME)
 
@@ -93,6 +94,9 @@ class MapMatchingGridEdges(object):
 			roadEndPoint = [float(linelist[2]), float(linelist[3])]
 			roadAngle = float(linelist[4])
 
+			if roadAngle < 0:
+				roadAngle += 360
+
 			curWeight = self.computeEdgeMatchingWeight(point, angle, roadStartPoint, roadEndPoint, roadAngle)
 			if curWeight > selectedEdgeWeight:
 				selectedEdgeWeight = curWeight
@@ -100,6 +104,9 @@ class MapMatchingGridEdges(object):
 				selectedEdgeStartPoint = roadStartPoint
 				selectedEdgeEndPoint = roadEndPoint
 
+		if selectedEdgeWeight <= 0:
+			return None
+		
 		matchedPoint = self.computeProjectionPoint(point, selectedEdgeStartPoint, selectedEdgeEndPoint, selectedEdgeAngle)
 		matchedGid = getFormatGID(matchedPoint, self.LngSPLIT, self.LatSPLIT, self.locs)['gid']
 		matchedAngle = selectedEdgeAngle;
@@ -121,8 +128,9 @@ class MapMatchingGridEdges(object):
 		candidateGrids = getGIDsByOffsets(gid, gridSearchRange, self.LngSPLIT, self.LatSPLIT, self.locs)
 
 		for search_gid in candidateGrids:
-			if search_gid in roadEdgesData.keys():
-				for roadEdgeStr in roadEdgesData[search_gid]:
+			search_gid_str = str(search_gid)
+			if search_gid_str in roadEdgesData.keys():
+				for roadEdgeStr in roadEdgesData[search_gid_str]:
 					candidateEdges.append(roadEdgeStr)
 
 		return candidateEdges

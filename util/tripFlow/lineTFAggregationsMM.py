@@ -46,14 +46,16 @@ class LineTFAggregationsMM(object):
 		self.resByAng['all'] = {}
 
 		# merge from and to
-		for gid, tripsArray in self.resByAng['from'].iteritems():
-			self.resByAng['all'][gid] = tripsArray
-
-		for gid, tripsArray in self.resByAng['to'].iteritems():
-			if self.resByAng['all'].has_key(gid):
-				self.resByAng['all'][gid].extend(tripsArray)
-			else:
+		if 'from' in self.resByAng.keys():
+			for gid, tripsArray in self.resByAng['from'].iteritems():
 				self.resByAng['all'][gid] = tripsArray
+
+		if 'to' in self.resByAng.keys():
+			for gid, tripsArray in self.resByAng['to'].iteritems():
+				if self.resByAng['all'].has_key(gid):
+					self.resByAng['all'][gid].extend(tripsArray)
+				else:
+					self.resByAng['all'][gid] = tripsArray
 
 		accumulator, clusterNum = 0, 0
 		totalNum, noiseNum = 0, 0
