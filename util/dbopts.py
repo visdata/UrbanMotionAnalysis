@@ -20,7 +20,7 @@ def connectMongo(dbname):
 		TYPE: Client, database
 	"""
 	try:
-		conn = pymongo.MongoClient('192.168.1.42', 27017) # 192.168.1.42
+		conn = pymongo.MongoClient('192.168.0.118', 27017) # 192.168.0.118
 		mdb = conn[dbname]
 		print "Connected successfully!!!"
 	except pymongo.errors.ConnectionFailure, e:
@@ -35,7 +35,7 @@ def connectMYSQL(dbname, passwd):
 		TYPE: db, cursor
 	"""
 	db = MySQLdb.connect(
-		host="192.168.1.42",    	# your host, usually localhost
+		host="192.168.0.118",    	# your host, usually localhost
 		user="root",         	# your username
 		passwd=passwd,  	# your password
 		db=dbname)		# name of the data base
