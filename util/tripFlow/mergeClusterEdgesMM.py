@@ -9,7 +9,7 @@
 
 import os
 import math
-
+from math import sqrt, pow, acos, pi, cos, sin
 
 class MergeClusterEdgesMM(object):
 	def __init__(self, PROP):
@@ -118,8 +118,11 @@ One edge is consisted of %d records averagely
 				speed += float(val[x][7])
 
 			speed /= recordNum
+
+			dirLng = cos(angle / 180 * pi)
+			dirLat = sin(angle / 180 * pi)
 			
-			onerec = "%.6f,%.6f,%s,%f,%d,%.6f,%.6f,%d,%.1f" % (gLng, gLat, 'all', speed, recordNum, lng, lat, self.index, angle)
+			onerec = "%.6f,%.6f,%s,%f,%d,%.6f,%.6f,%d,%.1f" % (lng, lat, 'all', speed, recordNum, dirLng, dirLat, self.index, angle)
 			self.res.append(onerec)
 
 	def outputToFile(self):

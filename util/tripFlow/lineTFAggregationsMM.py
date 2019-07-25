@@ -80,7 +80,7 @@ class LineTFAggregationsMM(object):
 				gLng = gidInfo['lng']
 
 				tmpLngLat.append("%.6f,%.6f" % (startLng, startLat))
-				subprops = "%s,%s,%s,%d" % (gdirStr, speed, direction, angle)
+				subprops = "%s,%s,%s,%.1f" % (gdirStr, speed, direction, angle)
 				tmpSubInfo.append("%d,%.6f,%.6f,%s" % (gid, gLng, gLat, subprops))
 
 				clusterKey = "%.6f,%.6f,%.1f" % (startLng, startLat, angle)
