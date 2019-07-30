@@ -114,8 +114,8 @@ def main(argv):
 	fway = open(stdinfile + "_way.json","w+")
 	tag_dict = {}
 
-	# context = etree.iterparse(stdinfile,tag=["node","way"])
-	context = etree.iterparse(stdinfile,tag=["way"])
+	context = etree.iterparse(stdinfile,tag=["node","way"])
+	# context = etree.iterparse(stdinfile,tag=["way"])
 	parse_node_num, parse_way_num, parse_valid_way_num = fast_iter(context, maxline, fnode, fway, tag_dict)
 		
 	fnode.close()
