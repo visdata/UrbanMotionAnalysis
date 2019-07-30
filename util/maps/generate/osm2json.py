@@ -10,36 +10,31 @@ import sys
 import getopt
 
 # 将指定tag的对象提取，写入json文件。 
-def process_element(elem):
+def process_element(fnode, fway, elem):
 	elem_data = etree.tostring(elem)
 	elem_dict = xmltodict.parse(elem_data,attr_prefix="",cdata_key="")
 	#print(elem_dict)
 	
-	if (elem.tag == "node"): 
+	if (elem.tag == "node"):
 		elem_jsonStr = json.dumps(elem_dict["node"])
 		fnode.write(elem_jsonStr + "\n")
 	elif (elem.tag == "way"): 
 		elem_jsonStr = json.dumps(elem_dict["way"])
 		fway.write(elem_jsonStr + "\n")
-	elif (elem.tag == "relation"): 
-		elem_jsonStr = json.dumps(elem_dict["relation"])
-		frelation.write(elem_jsonStr + "\n")
 
 # 遍历所有对象，然后调用process_element处理。
 # 迭代处理，func为迭代的element处理函数。
-def fast_iter(context, func, maxline):
+def fast_iter(context, maxline, fnode, fway):
 	placement = 0
 	try:
-		for event, elem in context:
+		for _, elem in context:
+			
+			process_element(fnode, fway, elem)  #处理每一个元素,调用process_element.    
 			placement += 1
-			if (maxline > 0):  # 最多的转换对象限制，大数据调试时使用于抽样检查。 
-				print(etree.tostring(elem))
-				if (placement >= maxline): break
 
-			func(elem)  #处理每一个元素,调用process_element.      
-			elem.clear()
-			while elem.getprevious() is not None:
-			   del elem.getparent()[0]
+			if (maxline > 0 and placement >= maxline):  # 最多的转换对象限制，大数据调试时使用于抽样检查。
+				break 
+
 	except Exception as ex:
 		print(time.time(),", Error:",ex)
 		
@@ -77,14 +72,12 @@ def main(argv):
 
 	fnode = open(stdinfile + "_node.json","w+")
 	fway = open(stdinfile + "_way.json","w+")
-	frelation = open(stdinfile + "_relation.json","w+")
 
-	context = etree.iterparse(stdinfile,tag=["node","way","relation"])
-	fast_iter(context, process_element, maxline)
+	context = etree.iterparse(stdinfile,tag=["node","way"])
+	fast_iter(context, maxline, fnode, fway)
 		
 	fnode.close()
 	fway.close()
-	frelation.close()
 
 	ENDTIME = time.time()
 	print ("END TIME: %s" % ENDTIME)
