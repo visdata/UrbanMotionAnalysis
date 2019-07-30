@@ -46,7 +46,7 @@ def fast_iter(context, func, maxline):
 	del context
 
 def usage():
-	print "(by default parameters set explicitly in the code) python testRoadNetworkEdges.py -p /dir-of-map -c 'BJ'"
+	print ("(by default parameters set explicitly in the code) python3 osm2json.py -s /dir-of-input -l 'maxline'")
 
 
 def main(argv):
@@ -55,7 +55,7 @@ def main(argv):
 		argsArray = ["help", 'stdinfile=', 'line=']
 		opts, args = getopt.getopt(argv, "hs:l:", argsArray)
 	except getopt.GetoptError as err:
-		print str(err)
+		print (str(err))
 		usage()
 		sys.exit(2)
 
@@ -73,7 +73,7 @@ def main(argv):
 			stdinfile = arg
 
 	STARTTIME = time.time()
-	print "Start at %s" % STARTTIME
+	print ("Start at %s" % STARTTIME)
 
 	fnode = open(stdinfile + "_node.json","w+")
 	fway = open(stdinfile + "_way.json","w+")
@@ -87,8 +87,8 @@ def main(argv):
 	frelation.close()
 
 	ENDTIME = time.time()
-	print "END TIME: %s" % ENDTIME
-	print "Total minutes: %f" % ((ENDTIME-STARTTIME)/60.0)
+	print ("END TIME: %s" % ENDTIME)
+	print ("Total minutes: %f" % ((ENDTIME-STARTTIME)/60.0))
 
 if __name__ == '__main__':
 	main(sys.argv[1:])
