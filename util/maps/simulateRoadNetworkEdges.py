@@ -52,7 +52,7 @@ def processTask(stdoutdir, locs, city, gridSize, LngSPLIT, LatSPLIT):
 		roadNetworkEdges[gid].append(roadNetworkEdgeVecStr)
 
 	# JSON
-	ofile = os.path.join(stdoutdir, 'road-network-edges-%s-%d.json' % (city, gridSize))
+	ofile = os.path.join(stdoutdir, 'road-network-edges-%s-%d-simulated.json' % (city, gridSize))
 	with open(ofile, 'wb') as f:
 		json.dump(roadNetworkEdges, f)
 	f.close()
@@ -146,5 +146,5 @@ def main(argv):
 
 
 if __name__ == '__main__':
-	logging.basicConfig(filename='logger-testroadnetworkedges.log', level=logging.DEBUG)
+	logging.basicConfig(filename='logger-simulateroadnetworkedges.log', level=logging.DEBUG)
 	main(sys.argv[1:])
