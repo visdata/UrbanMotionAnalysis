@@ -71,7 +71,7 @@ with open(ifilename, 'r') as ifile:
 num_trips = 0
 for k, v in roads.items():
 	num_trips = num_trips + len(v)
-print('num of ways to process: %d'%num_trips)
+print('num of road segments to process: %d'%num_trips)
 
 count = 0
 roadsInGrid = {}
@@ -125,7 +125,7 @@ print('num of grid: %d'%len(roadsInGrid.keys()))
 num_road = 0
 for k, v in roadsInGrid.items():
 	num_road = num_road + len(v)
-print('num of roads: %d'%num_road)
+print('num of grid-roads: %d'%num_road)
 
 '''
 路网格式转换，由{GridID:[[road1],[road2]...]}转换为{GridID:[road1', road2']},其中

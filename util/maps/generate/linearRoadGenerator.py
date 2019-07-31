@@ -234,9 +234,10 @@ for way in ways:
 	if numOfWays%10000==0:
 		print("Process %d ways..."%numOfWays)
 
-print("Num of road segments: %d"%numOfSegs)
+print("Num of ways: %d"%len(ways))
+print("Num of linear road segments: %d"%numOfSegs)
 print("Num of valid ways: %d"%len(way_dict.keys()))
-print("Num of valid road segments: %d"%numOfValidSegs)
+print("Num of valid linear road segments: %d"%numOfValidSegs)
 
 for boundDistIndex in reportPercentages:
 	boundDist = boundDistIndex * 10
