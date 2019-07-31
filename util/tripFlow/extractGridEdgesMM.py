@@ -270,8 +270,8 @@ class ExtractGridEdgesMM(object):
 		if type == 'all' or type == 'from':
 
 			fPointStr = "%.6f,%.6f" % (fPoint[0], fPoint[1])
-			fangle = acos(angleLat) * 180 / pi
-			if angleLng < 0 and fangle > 0.1:
+			fangle = acos(angleLng) * 180 / pi
+			if angleLat < 0 and fangle > 0.1:
 				fangle = 360 - fangle
 
 			# where we can put map-matching code
@@ -306,8 +306,8 @@ class ExtractGridEdgesMM(object):
 		if type == 'all' or type == 'to':
 			
 			tPointStr = "%.6f,%.6f" % (tPoint[0], tPoint[1])
-			tangle = acos(angleLat) * 180 / pi
-			if angleLng < 0 and tangle > 0.1:
+			tangle = acos(angleLng) * 180 / pi
+			if angleLat < 0 and tangle > 0.1:
 				tangle = 360 - tangle
 
 			# where we can put map-matching code

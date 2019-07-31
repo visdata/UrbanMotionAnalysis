@@ -238,21 +238,21 @@ class ExtractGridEdges(object):
 		# tiDis = sqrt(pow(tX, 2) + pow(tY, 2))
 
 		# 计算边方向及其绝对距�?
-		vecY = tPoint[0] - fPoint[0]
-		vecX = tPoint[1] - fPoint[1]
+		vecX = tPoint[0] - fPoint[0]
+		vecY = tPoint[1] - fPoint[1]
 		vecDis = sqrt(pow(vecY, 2) + pow(vecX, 2))
 
 
-		angleLng = vecY / vecDis
-		angleLat = vecX / vecDis
+		angleLat = vecY / vecDis
+		angleLng = vecX / vecDis
 
 
 		if type == 'all' or type == 'from':
 			tmpLng = fPoint[0] + angleLng
 			tmpLat = fPoint[1] + angleLat
 			fCircleIPointStr = "%.6f,%.6f" % (tmpLng, tmpLat)
-			fangle = acos(angleLat) * 180 / pi
-			if angleLng < 0 and fangle > 0.1:
+			fangle = acos(angleLng) * 180 / pi
+			if angleLat < 0 and fangle > 0.1:
 				fangle = 360 - fangle
 
 			# where we can put map-matching code
@@ -288,8 +288,8 @@ class ExtractGridEdges(object):
 			tmpLng = tPoint[0] + angleLng
 			tmpLat = tPoint[1] + angleLat
 			tCircleIPointStr = "%.6f,%.6f" % (tmpLng, tmpLat)
-			tangle = acos(angleLat) * 180 / pi
-			if angleLng < 0 and fangle > 0.1:
+			tangle = acos(angleLng) * 180 / pi
+			if angleLat < 0 and tangle > 0.1:
 				tangle = 360 - tangle
 
 			# where we can put map-matching code
