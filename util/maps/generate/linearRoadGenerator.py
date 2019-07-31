@@ -235,7 +235,7 @@ for way in ways:
 		print("Process %d ways..."%numOfWays)
 
 print("Num of road segments: %d"%numOfSegs)
-print("Num of valid road grids: %d"%len(way_dict.keys()))
+print("Num of valid ways: %d"%len(way_dict.keys()))
 print("Num of valid road segments: %d"%numOfValidSegs)
 
 for boundDistIndex in reportPercentages:
