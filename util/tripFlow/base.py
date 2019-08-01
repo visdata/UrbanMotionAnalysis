@@ -225,9 +225,7 @@ def getGridIntersection(point, angle, gid, LngSPLIT=0.0064, LatSPLIT=0.005, locs
 
 		# 起始/终止点需要对调
 		if (point[0]-sGIPoint[0]) * math.cos(math.pi * angle/180) < 0:
-			tmpPoint = sGIPoint
-			sGIPoint = eGIPoint
-			eGIPoint = tmpPoint
+			return eGIPoint, sGIPoint
 
 		return sGIPoint, eGIPoint
 	

@@ -113,12 +113,23 @@ class MapMatchingGridEdges(object):
 
 		matchedGridStartPoint, matchedGridEndPoint = getGridIntersection(matchedPoint, matchedAngle, matchedGid, self.LngSPLIT, self.LatSPLIT, self.locs)
 
+		# refine the intersection point to be inside the grid, so as to compute the correct grid id 
+		refinedRatio = 0.01
+		refinedGridStartPoint = [0,0]
+		refinedGridEndPoint = [0,0]
+
+		refinedGridStartPoint[0] = matchedGridStartPoint[0] + refinedRatio * (matchedGridEndPoint[0] - matchedGridStartPoint[0])
+		refinedGridStartPoint[1] = matchedGridStartPoint[1] + refinedRatio * (matchedGridEndPoint[1] - matchedGridStartPoint[1])
+
+		refinedGridEndPoint[0] = matchedGridEndPoint[0] - refinedRatio * (matchedGridEndPoint[0] - matchedGridStartPoint[0])
+		refinedGridEndPoint[1] = matchedGridEndPoint[1] - refinedRatio * (matchedGridEndPoint[1] - matchedGridStartPoint[1])
+
 		matchedEdge = {}
 		matchedEdge['point'] = matchedPoint
 		matchedEdge['gid'] = matchedGid
 		matchedEdge['angle'] = matchedAngle
-		matchedEdge['gstart-point'] = matchedGridStartPoint
-		matchedEdge['gend-point'] = matchedGridEndPoint
+		matchedEdge['gstart-point'] = refinedGridStartPoint
+		matchedEdge['gend-point'] = refinedGridEndPoint
 
 		return matchedEdge
 
