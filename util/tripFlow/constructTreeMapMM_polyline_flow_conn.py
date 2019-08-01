@@ -604,6 +604,12 @@ class ConstructTreeMapMM(object):
 		intersectionPoint = tmpStepRes['endPoints']
 		# originGid = tmpStepRes['originGid']
 
+		# maintain an gid info map: gid -> index of gids
+
+		gidsIndexMap = {}
+
+		for index in range(len(gids)):
+			gidsIndexMap[str(gids[index][2])] = index
 
 		queue += self.getNextDirections(gids, parentNode, searchDirection)
 
@@ -637,6 +643,31 @@ class ConstructTreeMapMM(object):
 			self.treeNodesID += 1
 			self.currentData[cateName]['count'] += 1 
 
+			# add a middle point in the path, which is the intersection point at the selected grid
+
+			curIntersectionPoint = [gids[gidsIndexMap[gidStr]][0],gids[gidsIndexMap[gidStr]][1]]
+			connectVec = [vertex[0]-curIntersectionPoint[0], vertex[1]-curIntersectionPoint[1]]
+
+			vectLen = sqrt(connectVec[0]*connectVec[0] + connectVec[1] * connectVec[1])
+			connectVec = [connectVec[0]/vectLen, connectVec[1]/vectLen]
+
+			connres = {
+				"root": {
+					"id": self.treeNodesID,
+					"lng": curIntersectionPoint[0],
+					"lat": curIntersectionPoint[1],
+					"dirLng": connectVec[0],
+					"dirLat": connectVec[0],
+					"num": parentNode[4],
+					"speed": parentNode[3],
+					"dis": dis
+				},
+				"children": []
+			}
+
+			self.treeNodesID += 1
+			self.currentData[cateName]['count'] += 1 
+
 			subres = {
 				"root": {
 					"id": self.treeNodesID,
@@ -648,7 +679,7 @@ class ConstructTreeMapMM(object):
 					"speed": parentNode[3],
 					"dis": dis
 				},
-				"children": [  ]
+				"children": []
 			}
 
 			#node = self.deleteNode(gidStr, nodeID)
@@ -659,7 +690,9 @@ class ConstructTreeMapMM(object):
 			# nothing = False
 			subres['children'] = childs
 			#print('push one child')
-			res.append(subres)
+
+			connres['children'].append(subres)
+			res.append(connres)
 
 		if len(res) == 0:
 			self.treeNodesID += 1
