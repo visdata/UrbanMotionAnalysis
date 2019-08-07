@@ -862,7 +862,7 @@ class ConstructTreeMapMM(object):
 				"reason": "do not intersect"
 			}
 
-		intersectionGID = getFormatGID(intersectionPoint, self.custom_params['LngSPLIT'], self.custom_params['LatSPLIT'], self.locs)['gid']
+		intersectionGID = int(getFormatGID(intersectionPoint, self.custom_params['LngSPLIT'], self.custom_params['LatSPLIT'], self.locs)['gid'])
 
 		if intersectionGID != currentGrid:
 			return {
