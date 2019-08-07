@@ -864,15 +864,14 @@ class ConstructTreeMapMM(object):
 
 		intersectionGID = getFormatGID(intersectionPoint, self.custom_params['LngSPLIT'], self.custom_params['LatSPLIT'], self.locs)['gid']
 
-		# if intersectionGID != currentGrid:
-		# 	return {
-		# 		"res": False,
-		# 		"reason": "intersection not in the next grid"
-		# 	}
-		# else:
-		rec[0] = intersectionPoint[0]
-		rec[1] = intersectionPoint[1]
-		rec[-4] = intersectionGID
+		if intersectionGID != currentGrid:
+			return {
+				"res": False,
+				"reason": "intersection not in the next grid"
+			}
+		else:
+			rec[0] = intersectionPoint[0]
+			rec[1] = intersectionPoint[1]
 
 		currentAngle = acos(cosVector(parentDirection, currentDirection)) * 180 / pi
 		if currentAngle < -self.custom_params['search_angle'] or currentAngle > self.custom_params['search_angle']:
