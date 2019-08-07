@@ -856,7 +856,7 @@ class ConstructTreeMapMM(object):
 
 		intersectionPoint = lineIntersection(currentLine, parentLine)
 
-		if !intersectionPoint:
+		if not intersectionPoint:
 			return {
 				"res": False,
 				"reason": "do not intersect"
