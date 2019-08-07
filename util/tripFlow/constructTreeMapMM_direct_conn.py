@@ -13,7 +13,6 @@ from util.tripFlow.base import getFormatGID
 from util.tripFlow.base import parseFormatGID
 from util.tripFlow.base import cosVector
 from util.tripFlow.base import getRealDistance
-from util.tripFlow.base import lineIntersection
 from math import sqrt, pow, acos, pi, cos, sin
 import simplejson
 
@@ -605,12 +604,6 @@ class ConstructTreeMapMM(object):
 		intersectionPoint = tmpStepRes['endPoints']
 		# originGid = tmpStepRes['originGid']
 
-		# maintain an gid info map: gid -> index of gids
-
-		gidsIndexMap = {}
-
-		for index in range(len(gids)):
-			gidsIndexMap[str(gids[index][2])] = index
 
 		queue += self.getNextDirections(gids, parentNode, searchDirection)
 
@@ -706,8 +699,8 @@ class ConstructTreeMapMM(object):
 		baseLatCenter = parsedObj['lat']
 		baseLngCenter = parsedObj['lng']
 
-		latDir = 1.001 if y > 0 else -1.001
-		lngDir = 1.001 if x > 0 else -1.001
+		latDir = 1 if y > 0 else -1
+		lngDir = 1 if x > 0 else -1
 
 		# �洢���н�������
 		jumpPoints = []
@@ -811,7 +804,7 @@ class ConstructTreeMapMM(object):
 				#if cateName == "to":
 					#self.recDict[cateName][gid][subIndex][5] = - self.recDict[cateName][gid][subIndex][5]
 					#self.recDict[cateName][gid][subIndex][6] = - self.recDict[cateName][gid][subIndex][6]
-				rec = copy.deepcopy(self.recDict["from"][gid][subIndex])
+				rec = self.recDict["from"][gid][subIndex]
 				validation = self.judgeRecordLegality(rec, parentNode, searchDirection)
 				if validation["res"]:
     				# ������������ķ��򣬽��зֲ���
@@ -838,34 +831,13 @@ class ConstructTreeMapMM(object):
 
 	def judgeRecordLegality(self, rec, parentNode, searchDirection):
 		cateName = self.currentCateName
-
-		currentPoint = rec[0:2]
 		currentDirection = rec[5:7]
 		currentStrength = rec[4]
-		currentGrid = int(rec[-4])
-		currentLine = [currentPoint, [currentPoint[0] + currentDirection[0], currentPoint[1] + currentDirection[1]]]
 
-		parentPoint = [parentNode[0], parentNode[1]]
 		parentDirection = [parentNode[5], parentNode[6]]
-
 		if searchDirection=='reverse':
 			parentDirection = [-parentNode[5], -parentNode[6]]
 		# parentStrength = parentNode[4]
-
-		parentLine = [parentPoint, [parentPoint[0] + parentDirection[0], parentPoint[1] + parentDirection[1]]]
-
-		intersectionPoint = lineIntersection(currentLine, parentLine)
-
-		intersectionGID = getFormatGID(intersectionPoint, self.custom_params['LngSPLIT'], self.custom_params['LatSPLIT'], self.locs)['gid']
-
-		if intersectionGID != currentGrid:
-			return {
-				"res": False,
-				"reason": "intersection not in the next grid"
-			}
-		else:
-			rec[0] = intersectionPoint[0]
-			rec[1] = intersectionPoint[1]
 
 		currentAngle = acos(cosVector(parentDirection, currentDirection)) * 180 / pi
 		if currentAngle < -self.custom_params['search_angle'] or currentAngle > self.custom_params['search_angle']:
