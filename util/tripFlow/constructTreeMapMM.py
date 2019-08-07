@@ -14,7 +14,6 @@ from util.tripFlow.base import parseFormatGID
 from util.tripFlow.base import cosVector
 from util.tripFlow.base import getRealDistance
 from util.tripFlow.base import lineIntersection
-from util.tripFlow.base import maxGridDist
 from math import sqrt, pow, acos, pi, cos, sin
 import simplejson
 
@@ -848,7 +847,6 @@ class ConstructTreeMapMM(object):
 
 		parentPoint = [parentNode[0], parentNode[1]]
 		parentDirection = [parentNode[5], parentNode[6]]
-		parentGrid = int(parentNode[-4])
 
 		if searchDirection=='reverse':
 			parentDirection = [-parentNode[5], -parentNode[6]]
@@ -866,20 +864,14 @@ class ConstructTreeMapMM(object):
 
 		intersectionGID = int(getFormatGID(intersectionPoint, self.custom_params['LngSPLIT'], self.custom_params['LatSPLIT'], self.locs)['gid'])
 
-		if intersectionGID == parentGrid:
+		if intersectionGID != currentGrid:
 			return {
 				"res": False,
-				"reason": "intersection in the same grid"
-			}
-		elif maxGridDist(intersectionGID, parentGrid) > self.custom_params['jump_length']:
-			return {
-				"res": False,
-				"reason": "intersection in a remote grid too far from the source"
+				"reason": "intersection not in the next grid"
 			}
 		else:
 			rec[0] = intersectionPoint[0]
 			rec[1] = intersectionPoint[1]
-			rec[-4] = intersectionGID
 
 		currentAngle = acos(cosVector(parentDirection, currentDirection)) * 180 / pi
 		if currentAngle < -self.custom_params['search_angle'] or currentAngle > self.custom_params['search_angle']:
