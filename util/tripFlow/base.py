@@ -244,4 +244,30 @@ def lineIntersection(line1, line2):
     x = det(d, xdiff) / float(div)
     y = det(d, ydiff) / float(div)
     return [x, y]
+
+def maxGridDist(gid1, gid2, LngSPLIT=0.0064, LatSPLIT=0.005, locs={
+	'north': 41.0500,  # 41.050,
+	'south': 39.4570,  # 39.457,
+	'west': 115.4220,  # 115.422,
+	'east': 117.5000,  # 117.500
+}):
+	"""
+	[NEW] 根据经纬度计算城市网格编号
 	
+	Args:
+		locs (TYPE): Description
+		point (TYPE): [lng, lat]
+	
+	Returns:
+		TYPE: Description
+	"""
+
+	LNGNUM = int( (locs['east'] - locs['west']) / LngSPLIT + 1 )
+
+	latind1 = int(int(gid1)/LNGNUM)
+	lngind1 = gid1 - latind1 * LNGNUM
+
+	latind2 = int(int(gid2)/LNGNUM)
+	lngind2 = gid2 - latind2 * LNGNUM
+
+	return max(abs(latind1- latind2),abs(lngind1 - lngind2))

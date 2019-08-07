@@ -14,6 +14,7 @@ from util.tripFlow.base import parseFormatGID
 from util.tripFlow.base import cosVector
 from util.tripFlow.base import getRealDistance
 from util.tripFlow.base import lineIntersection
+from util.tripFlow.base import maxGridDist
 from math import sqrt, pow, acos, pi, cos, sin
 import simplejson
 
@@ -869,6 +870,11 @@ class ConstructTreeMapMM(object):
 			return {
 				"res": False,
 				"reason": "intersection in the same grid"
+			}
+		elif maxGridDist(intersectionGID, parentGrid) > self.custom_params['jump_length']:
+			return {
+				"res": False,
+				"reason": "intersection in a remote grid too far from the source"
 			}
 		else:
 			rec[0] = intersectionPoint[0]
