@@ -241,7 +241,7 @@ def lineIntersection(line1, line2):
        return False
 
     d = (det(*line1), det(*line2))
-    x = det(d, xdiff) / div
-    y = det(d, ydiff) / div
+    x = det(d, xdiff) / float(div)
+    y = det(d, ydiff) / float(div)
     return [x, y]
 	
