@@ -847,6 +847,7 @@ class ConstructTreeMapMM(object):
 
 		parentPoint = [parentNode[0], parentNode[1]]
 		parentDirection = [parentNode[5], parentNode[6]]
+		parentGrid = int(parentNode[-4])
 
 		if searchDirection=='reverse':
 			parentDirection = [-parentNode[5], -parentNode[6]]
@@ -862,17 +863,17 @@ class ConstructTreeMapMM(object):
 				"reason": "do not intersect"
 			}
 
-		intersectionGID = getFormatGID(intersectionPoint, self.custom_params['LngSPLIT'], self.custom_params['LatSPLIT'], self.locs)['gid']
+		intersectionGID = int(getFormatGID(intersectionPoint, self.custom_params['LngSPLIT'], self.custom_params['LatSPLIT'], self.locs)['gid'])
 
-		# if intersectionGID != currentGrid:
-		# 	return {
-		# 		"res": False,
-		# 		"reason": "intersection not in the next grid"
-		# 	}
-		# else:
-		rec[0] = intersectionPoint[0]
-		rec[1] = intersectionPoint[1]
-		rec[-4] = intersectionGID
+		if intersectionGID == parentGrid:
+			return {
+				"res": False,
+				"reason": "intersection in the same grid"
+			}
+		else:
+			rec[0] = intersectionPoint[0]
+			rec[1] = intersectionPoint[1]
+			rec[-4] = intersectionGID
 
 		currentAngle = acos(cosVector(parentDirection, currentDirection)) * 180 / pi
 		if currentAngle < -self.custom_params['search_angle'] or currentAngle > self.custom_params['search_angle']:
