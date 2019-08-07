@@ -238,7 +238,7 @@ def lineIntersection(line1, line2):
 
     div = det(xdiff, ydiff)
     if div == 0:
-       raise Exception('lines do not intersect')
+       return False
 
     d = (det(*line1), det(*line2))
     x = det(d, xdiff) / div
