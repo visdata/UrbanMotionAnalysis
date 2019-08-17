@@ -8,6 +8,7 @@
 # [lng, lat, gid, from/to, speed, direction, angle, strength]
 
 import os
+import time
 import json
 from util.tripFlow.base import getFormatGID
 from util.tripFlow.base import getRealDistance
@@ -63,9 +64,14 @@ class ExtractGridEdgesMM(object):
 			'LatSPLIT': self.LatSPLIT,
 			'locs': self.locs
 		}
+		
+		mapmatchingStartTime = time.time()
 
 		task = MapMatchingGridEdges(matchingPROP)
 		self.resByCate = task.run()
+
+		mapmatchingEndTime = time.time()
+		print "Map-matching seconds: %f" % (mapmatchingEndTime-mapmatchingStartTime)
 		
 		res = self.outputToFile()
 		return {

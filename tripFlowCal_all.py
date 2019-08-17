@@ -32,8 +32,14 @@ def processTask(x, eps, K, delta, stdindir, stdoutdir, locs, city, LngSPLIT, Lat
 		'LngSPLIT': LngSPLIT,
 		'LatSPLIT': LatSPLIT
 	}
+
+	extractionStartTime = time.time()
+
 	task = ExtractGridEdges(PROP)
 	res = task.run()
+
+	extractionEndTime = time.time()
+	print "Extraction seconds: %f" % (extractionEndTime-extractionStartTime)
 	
 	count = res['count']
 	#min_samples = int(count / K) if count > K else 1
@@ -80,8 +86,14 @@ min_samples	= %d
 
 		# 角度聚类单独处理
 		if dataType == 'angle':
+
+			clusteringStartTime = time.time()
+
 			clusterTask = LineTFIntersections(clusterPROP)
 			noiseRate, clusterofilename = clusterTask.run()
+
+			clusteringEndTime = time.time()
+			print "Clustering seconds: %f" % (clusteringEndTime-clusteringStartTime)
 			break
 
 		clusterTask = DBScanTFIntersections(clusterPROP)
@@ -219,8 +231,8 @@ def main(argv):
 
 	# process for the time offset [startX, endX]
 
-	startX = 1736
-	endX = 1736
+	startX = 9
+	endX = 9
 
 	for i in xrange(startX,endX+1):
 		processTask(i, eps, K, delta, stdindir, stdoutdir, cityLatLngDict[city], city, LngSPLIT, LatSPLIT)

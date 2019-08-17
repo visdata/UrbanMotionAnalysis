@@ -35,7 +35,7 @@ class ExtractGridEdges(object):
 		self.LatSPLIT = PROP['LatSPLIT']
     
 	def run(self):
-		# 计算三个小时聚类 (index-4000为开始小时)
+		# 计算三个小时聚类 (index-4000为开始小时) 
 		if self.index >= 4000:
 			for i in range(self.index - 4000, self.index - 4000+3):
 				ifile = os.path.join(self.INPUT_PATH, 'traveldata-%d' % (i))  # 小时文件
