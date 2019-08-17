@@ -8,6 +8,7 @@ import math
 import simplejson
 import json
 import numpy
+import time
 from  util import BCCal
 
 
@@ -21,11 +22,12 @@ def comp(x):
 
 city = 'BJ'
 INPUT_PATH = '/datahouse/tripflow/2019-30-800-'+city+'/'+city.lower()+'-byhour-grid/'
-OUTPUT_PATH = '/datahouse/tripflow/2019-30-800-'+city+'/'+city.lower()+'-byhour-bc-sorted/'
+OUTPUT_PATH = '/datahouse/tripflow/2019-30-800-'+city+'/'+city.lower()+'-byhour-bc-sorted-new-time/'
 
 startIndex = 9
 endIndex = 10
 
+startTime = time.time()
 
 for i in range(startIndex, endIndex):
     total = 0
@@ -76,3 +78,6 @@ for i in range(startIndex, endIndex):
         print(float(count_zero)/total)
 
     f.close()
+
+endTime = time.time()
+print "CalBC seconds: %f" % (endTime-startTime)
