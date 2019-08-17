@@ -22,7 +22,7 @@ def comp(x):
 
 city = 'BJ'
 INPUT_PATH = '/datahouse/tripflow/2019-30-800-'+city+'/'+city.lower()+'-byhour-grid/'
-OUTPUT_PATH = '/datahouse/tripflow/2019-30-800-'+city+'/'+city.lower()+'-byhour-bc-sorted-new-time/'
+OUTPUT_PATH = '/datahouse/tripflow/2019-30-800-'+city+'/'+city.lower()+'-byhour-bc-sorted/'
 
 startIndex = 9
 endIndex = 10
