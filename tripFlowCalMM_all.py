@@ -192,8 +192,8 @@ def main(argv):
 
 	# process for the time offset [startX, endX]
 
-	startX = 1736
-	endX = 1736
+	startX = 9
+	endX = 9
 
 	for i in xrange(startX,endX+1):
 		processTask(i, eps, K, delta, stdindir, stdoutdir, cityLatLngDict[city], city, LngSPLIT, LatSPLIT, gridSize)
