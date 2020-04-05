@@ -1,11 +1,11 @@
-## 说明文档
+## 说明文档 Description
 
 状态预测数据处理以及可视化查询后段接口说明文档。
 
 
 
 
-### 离线处理部分
+### 离线处理部分 Offline processing section
 ```
 # 在原始数据上清洗成分天存储的数据，并添加属性
 # -d 输入文件夹
@@ -26,7 +26,7 @@ python segDayDataForTripFlow.py
 python tripFlowCal.py -d /tripflow/spaceInterval/ -p /tripflow/spaceInterval/ -e 2 -x 9 -k 24000
 ```
 
-### 在线调用部分
+### 在线调用部分 Online call section
 
 ```
 # 生成 treeMap 脚本
